@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2FA Verification | Shidle Lodge No. 601</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f8f8;
+      color: #000;
+      line-height: 1.6;
+    }
+    header {
+      background-color: #eee0cb;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    header img {
+      width: 260px;
+      height: auto;
+    }
+    .login-container {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #000;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      background-color: #eee0cb;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 0.75rem;
+    }
+    button:hover {
+      background-color: #e0d2ba;
+    }
+    .message {
+      text-align: center;
+      margin-top: 1rem;
+      color: red;
+      font-weight: bold;
+    }
+    footer {
+      background-color: #222;
+      color: #ccc;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+  </header>
+
+  <div class="login-container">
+    <h2>Two-Factor Verification</h2>
+    <p>Enter the verification code sent to your device to continue.</p>
+    <input type="text" id="verificationCode" placeholder="Verification Code" required />
+    <button onclick="verifyCode()">Verify</button>
+    <div class="message" id="verifyMessage"></div>
+  </div>
+
+  <footer>
+    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
+  </footer>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCev2Nen2UzirnyjkV7lhW_2a3jcazdDaY",
+      authDomain: "bushy-run-members-site.firebaseapp.com",
+      projectId: "bushy-run-members-site",
+      storageBucket: "bushy-run-members-site.appspot.com",
+      messagingSenderId: "545538387619",
+      appId: "1:545538387619:web:758d450d1c746912ed9916"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    let resolver;
+    if (window.resolverData) {
+      resolver = window.resolverData;
+    } else {
+      document.getElementById("verifyMessage").textContent = "No 2FA session found. Please try logging in again.";
+    }
+
+    async function verifyCode() {
+      const code = document.getElementById("verificationCode").value;
+      const message = document.getElementById("verifyMessage");
+
+      if (!resolver) {
+        message.textContent = "2FA session missing. Please log in again.";
+        return;
+      }
+
+      try {
+        const cred = firebase.auth.PhoneAuthProvider.credential(resolver.hints[0].session, code);
+        await resolver.resolveSignIn(cred);
+        message.style.color = "green";
+        message.textContent = "Code verified. Redirecting...";
+        setTimeout(() => {
+          window.location.href = "members.html";
+        }, 1000);
+      } catch (error) {
+        message.style.color = "red";
+        message.textContent = error.message;
+      }
+    }
+  </script>
+</body>
+</html>
