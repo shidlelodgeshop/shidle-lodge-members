@@ -40,7 +40,6 @@
     .login-container h2 {
       text-align: center;
       margin-bottom: 1rem;
-      color: #000;
     }
     .login-container p {
       text-align: center;
@@ -49,7 +48,8 @@
       margin-bottom: 2rem;
     }
     input[type="email"],
-    input[type="password"] {
+    input[type="password"],
+    input[type="text"] {
       width: 100%;
       padding: 0.75rem;
       margin-bottom: 1rem;
@@ -57,33 +57,26 @@
       border-radius: 4px;
       font-size: 1rem;
     }
-    button {
+    button,
+    .google-btn {
       width: 100%;
       padding: 0.75rem;
       font-size: 1rem;
       border: none;
       border-radius: 4px;
       background-color: #eee0cb;
-      color: black;
+      color: #000;
       font-weight: bold;
       cursor: pointer;
       margin-bottom: 0.75rem;
-    }
-    button:hover {
-      background-color: #e0d2ba;
-    }
-    .google-btn {
-      background-color: white;
-      border: 1px solid #000;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      padding: 0.5rem;
-      margin-bottom: 1rem;
-      font-weight: bold;
-      font-size: 1rem;
-      color: black;
+    }
+    button:hover,
+    .google-btn:hover {
+      background-color: #e0d2ba;
     }
     .google-btn img {
       width: 20px;
@@ -183,11 +176,17 @@
       const message = document.getElementById("loginMessage");
 
       auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          window.location.href = "members.html";
+        .then(userCredential => {
+          const user = userCredential.user;
+          if (user.multiFactor.enrolledFactors.length > 0) {
+            message.textContent = "2FA required. Redirecting...";
+            window.location.href = "verify-2fa.html";
+          } else {
+            window.location.href = "members.html";
+          }
         })
-        .catch((error) => {
-          message.textContent = error.message;
+        .catch(error => {
+          message.textContent = "Login failed: " + error.message;
         });
     }
 
@@ -196,11 +195,14 @@
       const message = document.getElementById("loginMessage");
 
       auth.signInWithPopup(provider)
-        .then(() => {
+        .then(result => {
+          message.style.color = "green";
+          message.textContent = "Login successful. Redirecting...";
           window.location.href = "members.html";
         })
-        .catch((error) => {
-          message.textContent = error.message;
+        .catch(error => {
+          message.style.color = "red";
+          message.textContent = "Google sign-in failed: " + error.message;
         });
     }
 
@@ -219,9 +221,9 @@
           message.style.color = "green";
           message.textContent = "Password reset email sent. Check your inbox.";
         })
-        .catch((error) => {
+        .catch(error => {
           message.style.color = "red";
-          message.textContent = error.message;
+          message.textContent = "Reset failed: " + error.message;
         });
     }
   </script>
