@@ -57,6 +57,14 @@
       border-radius: 4px;
       font-size: 1rem;
     }
+    .remember-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .remember-container input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
     button,
     .google-btn {
       width: 100%;
@@ -135,6 +143,11 @@
     <input type="email" id="email" placeholder="Email" required />
     <input type="password" id="password" placeholder="Password" required />
 
+    <div class="remember-container">
+      <input type="checkbox" id="rememberMe" />
+      <label for="rememberMe">Remember me</label>
+    </div>
+
     <div class="forgot-password">
       <a href="#" onclick="resetPassword()">Reset password</a>
     </div>
@@ -170,40 +183,45 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    function signInWithEmail() {
+    async function signInWithEmail() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
+      const remember = document.getElementById("rememberMe").checked;
       const message = document.getElementById("loginMessage");
 
-      auth.signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          const user = userCredential.user;
-          if (user.multiFactor.enrolledFactors.length > 0) {
-            message.textContent = "2FA required. Redirecting...";
-            window.location.href = "verify-2fa.html";
-          } else {
-            window.location.href = "members.html";
-          }
-        })
-        .catch(error => {
-          message.textContent = "Login failed: " + error.message;
-        });
+      const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+      try {
+        await auth.setPersistence(persistence);
+        const result = await auth.signInWithEmailAndPassword(email, password);
+        window.location.href = "members.html";
+      } catch (error) {
+        if (error.code === 'auth/multi-factor-auth-required') {
+          window.resolverData = error.resolver;
+          window.location.href = 'verify-2fa.html';
+        } else {
+          message.textContent = error.message;
+        }
+      }
     }
 
-    function signInWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
+    async function signInWithGoogle() {
+      const remember = document.getElementById("rememberMe").checked;
       const message = document.getElementById("loginMessage");
+      const provider = new firebase.auth.GoogleAuthProvider();
 
-      auth.signInWithPopup(provider)
-        .then(result => {
-          message.style.color = "green";
-          message.textContent = "Login successful. Redirecting...";
-          window.location.href = "members.html";
-        })
-        .catch(error => {
-          message.style.color = "red";
+      const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+      try {
+        await auth.setPersistence(persistence);
+        const result = await auth.signInWithPopup(provider);
+        window.location.href = "members.html";
+      } catch (error) {
+        if (error.code === 'auth/multi-factor-auth-required') {
+          window.resolverData = error.resolver;
+          window.location.href = 'verify-2fa.html';
+        } else {
           message.textContent = "Google sign-in failed: " + error.message;
-        });
+        }
+      }
     }
 
     function resetPassword() {
@@ -211,7 +229,6 @@
       const message = document.getElementById("loginMessage");
 
       if (!email) {
-        message.style.color = "red";
         message.textContent = "Please enter your email above first.";
         return;
       }
@@ -226,6 +243,17 @@
           message.textContent = "Reset failed: " + error.message;
         });
     }
+
+    // Auto sign-out after 30 minutes of inactivity and redirect
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        setTimeout(() => {
+          auth.signOut().then(() => {
+            window.location.href = 'index.html';
+          });
+        }, 30 * 60 * 1000); // 30 minutes
+      }
+    });
   </script>
 </body>
 </html>
