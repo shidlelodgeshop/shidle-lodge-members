@@ -1,59 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Member Login | Shidle Lodge No. 601</title>
-
-  <!-- Google Fonts -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shidle Lodge Member Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-
   <style>
     body {
-      margin: 0;
       font-family: 'Roboto', sans-serif;
-      background-color: #f8f8f8;
-      color: #000;
-      line-height: 1.6;
-    }
-    header {
-      background-color: #eee0cb;
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-    header img {
-      width: 260px;
-      height: auto;
+      background-color: #f2e9db;
+      margin: 0;
+      padding: 0;
     }
     .login-container {
       max-width: 400px;
-      margin: 2rem auto;
+      margin: 5rem auto;
       padding: 2rem;
       background: white;
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .login-container img {
+      display: block;
+      margin: 0 auto 1rem auto;
+      width: 260px;
+      height: auto;
     }
     .login-container h2 {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       color: #000;
-    }
-    .login-container p {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #333;
-      margin-bottom: 2rem;
     }
     input[type="email"],
     input[type="password"] {
       width: 100%;
       padding: 0.75rem;
       margin-bottom: 1rem;
-      border: 1px solid #000;
+      border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 1rem;
     }
@@ -63,61 +46,50 @@
       font-size: 1rem;
       border: none;
       border-radius: 4px;
-      background-color: #eee0cb;
-      color: black;
+      background-color: #a30000;
+      color: white;
       font-weight: bold;
       cursor: pointer;
       margin-bottom: 0.75rem;
     }
     button:hover {
-      background-color: #e0d2ba;
+      opacity: 0.9;
     }
     .google-btn {
       background-color: white;
-      border: 1px solid #000;
+      border: 1px solid #ccc;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
       padding: 0.5rem;
       margin-bottom: 1rem;
+      cursor: pointer;
       font-weight: bold;
       font-size: 1rem;
-      color: black;
+      color: #444;
     }
     .google-btn img {
       width: 20px;
       height: 20px;
-    }
-    .forgot-password {
-      text-align: right;
-      margin: -0.5rem 0 1rem;
-    }
-    .forgot-password a {
-      font-size: 0.9rem;
-      color: black;
-      text-decoration: none;
-    }
-    .forgot-password a:hover {
-      text-decoration: underline;
-    }
-    .signup-link {
-      text-align: center;
-      margin-top: 1.5rem;
-    }
-    .signup-link a {
-      color: black;
-      font-weight: bold;
-      text-decoration: none;
-    }
-    .signup-link a:hover {
-      text-decoration: underline;
     }
     .message {
       text-align: center;
       margin-top: 1rem;
       color: red;
       font-weight: bold;
+    }
+    .signup-link {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    .signup-link a {
+      color: #a30000;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .signup-link a:hover {
+      text-decoration: underline;
     }
     footer {
       background-color: #222;
@@ -129,34 +101,23 @@
     }
   </style>
 </head>
-
 <body>
-  <header>
-    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
-  </header>
-
   <div class="login-container">
-    <h2>Account sign in</h2>
-    <p>Sign in to your account to access your profile, history, and private pages.</p>
-
+    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+    <h2>Member Login</h2>
     <input type="email" id="email" placeholder="Email" required />
     <input type="password" id="password" placeholder="Password" required />
-
-    <div class="forgot-password">
-      <a href="#" onclick="resetPassword()">Reset password</a>
-    </div>
-
-    <button onclick="signInWithEmail()">Sign in</button>
-
+    <p style="text-align: right; margin-top: -0.5rem; margin-bottom: 1rem;">
+      <a href="#" onclick="resetPassword()" style="color: #a30000; font-size: 0.9rem;">Forgot Password?</a>
+    </p>
+    <button onclick="signInWithEmail()">Login with Email</button>
     <button class="google-btn" onclick="signInWithGoogle()">
       <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
       Sign in with Google
     </button>
-
     <div class="message" id="loginMessage"></div>
-
     <div class="signup-link">
-      <a href="signup.html">New member? Create an account</a>
+      Not yet a member? <a href="signup.html">Sign up here</a>.
     </div>
   </div>
 
@@ -164,14 +125,17 @@
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
 
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyCev2Nen2UzirnyjkV7lhW_2a3jcazdDaY",
-      authDomain: "bushy-run-members-site.firebaseapp.com",
-      projectId: "bushy-run-members-site",
-      storageBucket: "bushy-run-members-site.appspot.com",
-      messagingSenderId: "545538387619",
-      appId: "1:545538387619:web:758d450d1c746912ed9916"
+      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+      authDomain: "shidle-lodge-members.firebaseapp.com",
+      projectId: "shidle-lodge-members",
+      storageBucket: "shidle-lodge-members.firebasestorage.app",
+      messagingSenderId: "293450171850",
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
+      measurementId: "G-2T6R765V2V"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -217,7 +181,7 @@
       auth.sendPasswordResetEmail(email)
         .then(() => {
           message.style.color = "green";
-          message.textContent = "Password reset email sent. Check your inbox.";
+          message.textContent = "Password reset email sent.";
         })
         .catch((error) => {
           message.style.color = "red";
