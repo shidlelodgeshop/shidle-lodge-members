@@ -120,6 +120,9 @@
       color: red;
       font-weight: bold;
     }
+    .show-password {
+      margin-bottom: 1rem;
+    }
     footer {
       background-color: #222;
       color: #ccc;
@@ -142,6 +145,10 @@
 
     <input type="email" id="email" placeholder="Email" required />
     <input type="password" id="password" placeholder="Password" required />
+
+    <div class="show-password">
+      <input type="checkbox" id="togglePassword"> <label for="togglePassword">Show password</label>
+    </div>
 
     <div class="remember-container">
       <input type="checkbox" id="rememberMe" />
@@ -183,6 +190,11 @@
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+
+    document.getElementById("togglePassword").addEventListener("change", function () {
+      const pwd = document.getElementById("password");
+      pwd.type = this.checked ? "text" : "password";
+    });
 
     async function signInWithEmail() {
       const email = document.getElementById("email").value;
