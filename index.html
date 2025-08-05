@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Member Login | Shidle Lodge No. 601</title>
 
-  <!-- Google Fonts New Fix Login -->
+  <!-- Google Fonts New Login 2 -->
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- Firebase SDKs -->
@@ -202,82 +202,26 @@
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const remember = document.getElementById("rememberMe").checked;
-      const message = document.getElementById("loginMessage");
 
       const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
       try {
         await auth.setPersistence(persistence);
-        const result = await auth.signInWithEmailAndPassword(email, password);
-        await result.user.reload();
-
-        if (!auth.currentUser.emailVerified) {
-          message.innerHTML = `
-            Your email is not verified. Please check your inbox (or spam).<br>
-            <button id="resend-verification">Resend Verification Email</button>
-          `;
-          document.getElementById("resend-verification").addEventListener("click", async () => {
-            try {
-              await result.user.sendEmailVerification({
-                url: "https://members.shidlelodge601.org/verified.html"
-              });
-              message.style.color = "green";
-              message.innerHTML = "Verification email sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.";
-            } catch (error) {
-              message.textContent = "Error sending verification email: " + error.message;
-            }
-          });
-          return;
-        }
-
-        window.location.href = "/home";
+        await auth.signInWithEmailAndPassword(email, password);
       } catch (error) {
-        if (error.code === 'auth/multi-factor-auth-required') {
-          window.resolverData = error.resolver;
-          window.location.href = 'verify-2fa.html';
-        } else {
-          message.textContent = error.message;
-        }
+        document.getElementById("loginMessage").textContent = error.message;
       }
     }
 
     async function signInWithGoogle() {
       const remember = document.getElementById("rememberMe").checked;
-      const message = document.getElementById("loginMessage");
       const provider = new firebase.auth.GoogleAuthProvider();
 
       const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
       try {
         await auth.setPersistence(persistence);
-        const result = await auth.signInWithPopup(provider);
-        await result.user.reload();
-
-        if (!auth.currentUser.emailVerified) {
-          message.innerHTML = `
-            Your email is not verified. Please check your inbox (or spam).<br>
-            <button id="resend-verification">Resend Verification Email</button>
-          `;
-          document.getElementById("resend-verification").addEventListener("click", async () => {
-            try {
-              await result.user.sendEmailVerification({
-                url: "https://members.shidlelodge601.org/verified.html"
-              });
-              message.style.color = "green";
-              message.innerHTML = "Verification email sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.";
-            } catch (error) {
-              message.textContent = "Error sending verification email: " + error.message;
-            }
-          });
-          return;
-        }
-
-        window.location.href = "/home";
+        await auth.signInWithPopup(provider);
       } catch (error) {
-        if (error.code === 'auth/multi-factor-auth-required') {
-          window.resolverData = error.resolver;
-          window.location.href = 'verify-2fa.html';
-        } else {
-          message.textContent = "Google sign-in failed: " + error.message;
-        }
+        document.getElementById("loginMessage").textContent = "Google sign-in failed: " + error.message;
       }
     }
 
@@ -301,13 +245,39 @@
         });
     }
 
-    auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(async user => {
+      const message = document.getElementById("loginMessage");
       if (user) {
+        await user.reload();
+        if (!user.emailVerified) {
+          message.innerHTML = `
+            Your email is not verified. Please check your inbox (or spam).<br>
+            <button id="resend-verification">Resend Verification Email</button>
+          `;
+          document.getElementById("resend-verification").addEventListener("click", async () => {
+            try {
+              await user.sendEmailVerification({
+                url: "https://members.shidlelodge601.org/verified.html"
+              });
+              message.style.color = "green";
+              message.innerHTML = "Verification email sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.";
+            } catch (error) {
+              message.textContent = "Error sending verification email: " + error.message;
+            }
+          });
+
+          setTimeout(() => {
+            auth.signOut();
+          }, 5000);
+        } else {
+          window.location.href = "/home";
+        }
+
         setTimeout(() => {
           auth.signOut().then(() => {
             window.location.href = 'index.html';
           });
-        }, 30 * 60 * 1000); // Auto sign-out after 30 minutes
+        }, 30 * 60 * 1000);
       }
     });
   </script>
