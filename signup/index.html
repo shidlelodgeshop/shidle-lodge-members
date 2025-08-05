@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Member Sign Up | Shidle Lodge No. 601</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f8f8;
+      color: #000;
+      line-height: 1.6;
+    }
+    header {
+      background-color: #eee0cb;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    header img {
+      width: 260px;
+      height: auto;
+    }
+    .signup-container {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .signup-container h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    input[type="email"],
+    input[type="password"],
+    input[type="text"],
+    input[type="tel"],
+    input[type="date"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #000;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .radio-group {
+      margin-bottom: 1rem;
+    }
+    .radio-group label {
+      margin-right: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      background-color: #eee0cb;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e0d2ba;
+    }
+    .message {
+      text-align: center;
+      margin-top: 1rem;
+      color: red;
+      font-weight: bold;
+    }
+    footer {
+      background-color: #222;
+      color: #ccc;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+    .birthday-label {
+      margin: 1rem 0 0.25rem;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg=true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+  </header>
+
+  <div class="signup-container">
+    <h2>Create an Account</h2>
+    <input type="text" id="firstName" placeholder="First Name" required />
+    <input type="text" id="lastName" placeholder="Last Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="tel" id="phone" placeholder="Phone Number" required />
+
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+
+    <div class="radio-group">
+      <label>Past Master?</label>
+      <label><input type="radio" name="pastMaster" value="yes" required /> Yes</label>
+      <label><input type="radio" name="pastMaster" value="no" required /> No</label>
+    </div>
+
+    <label class="birthday-label">Birthday (optional, for birthday listing):</label>
+    <input type="date" id="birthday" />
+
+    <div class="g-recaptcha" data-sitekey="your-site-key-here"></div>
+    <br>
+    <button onclick="register()">Sign Up</button>
+    <div class="message" id="signupMessage"></div>
+  </div>
+
+  <footer>
+    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
+  </footer>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCev2Nen2UzirnyjkV7lhW_2a3jcazdDaY",
+      authDomain: "bushy-run-members-site.firebaseapp.com",
+      projectId: "bushy-run-members-site",
+      storageBucket: "bushy-run-members-site.appspot.com",
+      messagingSenderId: "545538387619",
+      appId: "1:545538387619:web:758d450d1c746912ed9916"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    async function register() {
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const phone = document.getElementById("phone").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const birthday = document.getElementById("birthday").value;
+      const pastMaster = document.querySelector('input[name="pastMaster"]:checked')?.value;
+      const message = document.getElementById("signupMessage");
+
+      if (password !== confirmPassword) {
+        message.textContent = "Passwords do not match.";
+        return;
+      }
+
+      const captchaResponse = grecaptcha.getResponse();
+      if (!captchaResponse) {
+        message.textContent = "Please complete the CAPTCHA.";
+        return;
+      }
+
+      try {
+        const approvedList = await db.collection("preapprovedEmails").doc(email).get();
+        if (!approvedList.exists) {
+          message.textContent = "This email is not on the approved list. Please contact the lodge.";
+          return;
+        }
+
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        await db.collection("members").doc(user.uid).set({
+          firstName,
+          lastName,
+          phone,
+          email,
+          birthday: birthday || null,
+          pastMaster
+        });
+
+        message.style.color = "green";
+        message.textContent = "Account created successfully. You may now log in.";
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    }
+  </script>
+</body>
+</html>
