@@ -136,7 +136,9 @@
 
 <body>
   <header>
-    <a href="https://members.shidlelodge601.org/"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
+    <a href="https://members.shidlelodge601.org/">
+      <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+    </a>
   </header>
 
   <div class="login-container">
@@ -206,9 +208,9 @@
       try {
         await auth.setPersistence(persistence);
         const result = await auth.signInWithEmailAndPassword(email, password);
-await result.user.reload();
+        await result.user.reload();
 
-if (!auth.currentUser.emailVerified) {
+        if (!auth.currentUser.emailVerified) {
           message.innerHTML = `
             Your email is not verified. Please check your inbox (or spam).<br>
             <button id="resend-verification">Resend Verification Email</button>
@@ -228,7 +230,6 @@ if (!auth.currentUser.emailVerified) {
         }
 
         window.location.href = "/home";
-
       } catch (error) {
         if (error.code === 'auth/multi-factor-auth-required') {
           window.resolverData = error.resolver;
@@ -247,11 +248,10 @@ if (!auth.currentUser.emailVerified) {
       const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
       try {
         await auth.setPersistence(persistence);
-    const result = await auth.signInWithPopup(provider);
-await result.user.reload();
+        const result = await auth.signInWithPopup(provider);
+        await result.user.reload();
 
-if (!auth.currentUser.emailVerified) {
-
+        if (!auth.currentUser.emailVerified) {
           message.innerHTML = `
             Your email is not verified. Please check your inbox (or spam).<br>
             <button id="resend-verification">Resend Verification Email</button>
@@ -271,7 +271,6 @@ if (!auth.currentUser.emailVerified) {
         }
 
         window.location.href = "/home";
-
       } catch (error) {
         if (error.code === 'auth/multi-factor-auth-required') {
           window.resolverData = error.resolver;
@@ -308,7 +307,7 @@ if (!auth.currentUser.emailVerified) {
           auth.signOut().then(() => {
             window.location.href = 'index.html';
           });
-        }, 30 * 60 * 1000);
+        }, 30 * 60 * 1000); // Auto sign-out after 30 minutes
       }
     });
   </script>
