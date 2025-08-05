@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Member Sign Up | Shidle Lodge No. 601</title>
+  <title>Member Login | Shidle Lodge No. 601</title>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -11,8 +11,6 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
   <style>
     body {
@@ -31,7 +29,7 @@
       width: 260px;
       height: auto;
     }
-    .signup-container {
+    .login-container {
       max-width: 400px;
       margin: 2rem auto;
       padding: 2rem;
@@ -39,15 +37,19 @@
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-    .signup-container h2 {
+    .login-container h2 {
       text-align: center;
       margin-bottom: 1rem;
     }
+    .login-container p {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #333;
+      margin-bottom: 2rem;
+    }
     input[type="email"],
     input[type="password"],
-    input[type="text"],
-    input[type="tel"],
-    input[type="date"] {
+    input[type="text"] {
       width: 100%;
       padding: 0.75rem;
       margin-bottom: 1rem;
@@ -55,13 +57,16 @@
       border-radius: 4px;
       font-size: 1rem;
     }
-    .radio-group {
+    .remember-container {
+      display: flex;
+      align-items: center;
       margin-bottom: 1rem;
     }
-    .radio-group label {
-      margin-right: 1rem;
+    .remember-container input[type="checkbox"] {
+      margin-right: 0.5rem;
     }
-    button {
+    button,
+    .google-btn {
       width: 100%;
       padding: 0.75rem;
       font-size: 1rem;
@@ -71,9 +76,43 @@
       color: #000;
       font-weight: bold;
       cursor: pointer;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
-    button:hover {
+    button:hover,
+    .google-btn:hover {
       background-color: #e0d2ba;
+    }
+    .google-btn img {
+      width: 20px;
+      height: 20px;
+    }
+    .forgot-password {
+      text-align: right;
+      margin: -0.5rem 0 1rem;
+    }
+    .forgot-password a {
+      font-size: 0.9rem;
+      color: black;
+      text-decoration: none;
+    }
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+    .signup-link {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    .signup-link a {
+      color: black;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .signup-link a:hover {
+      text-decoration: underline;
     }
     .message {
       text-align: center;
@@ -89,41 +128,43 @@
       margin-top: 3rem;
       font-size: 0.9rem;
     }
-    .birthday-label {
-      margin: 1rem 0 0.25rem;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
   </style>
 </head>
+
 <body>
   <header>
-    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg=true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
   </header>
 
-  <div class="signup-container">
-    <h2>Create an Account</h2>
-    <input type="text" id="firstName" placeholder="First Name" required />
-    <input type="text" id="lastName" placeholder="Last Name" required />
+  <div class="login-container">
+    <h2>Account sign in</h2>
+    <p>Sign in to your account to access your profile, history, and private pages.</p>
+
     <input type="email" id="email" placeholder="Email" required />
-    <input type="tel" id="phone" placeholder="Phone Number" required />
-
     <input type="password" id="password" placeholder="Password" required />
-    <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
 
-    <div class="radio-group">
-      <label>Past Master?</label>
-      <label><input type="radio" name="pastMaster" value="yes" required /> Yes</label>
-      <label><input type="radio" name="pastMaster" value="no" required /> No</label>
+    <div class="remember-container">
+      <input type="checkbox" id="rememberMe" />
+      <label for="rememberMe">Remember me</label>
     </div>
 
-    <label class="birthday-label">Birthday (optional, for birthday listing):</label>
-    <input type="date" id="birthday" />
+    <div class="forgot-password">
+      <a href="#" onclick="resetPassword()">Reset password</a>
+    </div>
 
-    <div class="g-recaptcha" data-sitekey="6LeWn5srAAAAAG9hzVZMKA2yGcZhyacrgf4stN-S"></div>
-    <br>
-    <button onclick="register()">Sign Up</button>
-    <div class="message" id="signupMessage"></div>
+    <button onclick="signInWithEmail()">Sign in</button>
+
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+      Sign in with Google
+    </button>
+
+    <div class="message" id="loginMessage"></div>
+
+    <div class="signup-link">
+      <a href="signup.html">New member? Create an account</a>
+      <a href="/signup">New member? Create an account</a>
+    </div>
   </div>
 
   <footer>
@@ -142,55 +183,78 @@
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    async function register() {
-      const firstName = document.getElementById("firstName").value;
-      const lastName = document.getElementById("lastName").value;
-      const phone = document.getElementById("phone").value;
+    async function signInWithEmail() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-      const birthday = document.getElementById("birthday").value;
-      const pastMaster = document.querySelector('input[name="pastMaster"]:checked')?.value;
-      const message = document.getElementById("signupMessage");
+      const remember = document.getElementById("rememberMe").checked;
+      const message = document.getElementById("loginMessage");
 
-      if (password !== confirmPassword) {
-        message.textContent = "Passwords do not match.";
-        return;
-      }
-
-      const captchaResponse = grecaptcha.getResponse();
-      if (!captchaResponse) {
-        message.textContent = "Please complete the CAPTCHA.";
-        return;
-      }
-
+      const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
       try {
-        const approvedList = await db.collection("preapprovedEmails").doc(email).get();
-        if (!approvedList.exists) {
-          message.textContent = "This email is not on the approved list. Please contact the lodge.";
-          return;
-        }
-
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-
-        await db.collection("members").doc(user.uid).set({
-          firstName,
-          lastName,
-          phone,
-          email,
-          birthday: birthday || null,
-          pastMaster
-        });
-
-        message.style.color = "green";
-        message.textContent = "Account created successfully. You may now log in.";
+        await auth.setPersistence(persistence);
+        const result = await auth.signInWithEmailAndPassword(email, password);
+        window.location.href = "members.html";
       } catch (error) {
-        message.textContent = error.message;
+        if (error.code === 'auth/multi-factor-auth-required') {
+          window.resolverData = error.resolver;
+          window.location.href = 'verify-2fa.html';
+        } else {
+          message.textContent = error.message;
+        }
       }
     }
+
+    async function signInWithGoogle() {
+      const remember = document.getElementById("rememberMe").checked;
+      const message = document.getElementById("loginMessage");
+      const provider = new firebase.auth.GoogleAuthProvider();
+
+      const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+      try {
+        await auth.setPersistence(persistence);
+        const result = await auth.signInWithPopup(provider);
+        window.location.href = "members.html";
+      } catch (error) {
+        if (error.code === 'auth/multi-factor-auth-required') {
+          window.resolverData = error.resolver;
+          window.location.href = 'verify-2fa.html';
+        } else {
+          message.textContent = "Google sign-in failed: " + error.message;
+        }
+      }
+    }
+
+    function resetPassword() {
+      const email = document.getElementById("email").value;
+      const message = document.getElementById("loginMessage");
+
+      if (!email) {
+        message.textContent = "Please enter your email above first.";
+        return;
+      }
+
+      auth.sendPasswordResetEmail(email)
+        .then(() => {
+          message.style.color = "green";
+          message.textContent = "Password reset email sent. Check your inbox.";
+        })
+        .catch(error => {
+          message.style.color = "red";
+          message.textContent = "Reset failed: " + error.message;
+        });
+    }
+
+    // Auto sign-out after 30 minutes of inactivity and redirect
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        setTimeout(() => {
+          auth.signOut().then(() => {
+            window.location.href = 'index.html';
+          });
+        }, 30 * 60 * 1000); // 30 minutes
+      }
+    });
   </script>
 </body>
 </html>
