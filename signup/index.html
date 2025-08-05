@@ -101,23 +101,26 @@
     <a href="https://members.shidlelodge601.org"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
   </header>
 
-  <div class="signup-container" id="signupForm">
-    <h2>Create an Account</h2>
+  <div class="container">
+    <h2>Create Account</h2>
     <input type="text" id="firstName" placeholder="First Name" required />
     <input type="text" id="lastName" placeholder="Last Name" required />
     <input type="email" id="email" placeholder="Email" required />
-    <input type="tel" id="phone" placeholder="Phone Number (optional, for 2FA)" />
     <input type="password" id="password" placeholder="Password" required />
-    <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+    <input type="password" id="confirm-password" placeholder="Confirm Password" required />
+    <button id="signup">Sign Up</button>
 
-    <div class="radio-group">
-      <label>Past Master?</label>
-      <label><input type="radio" name="pastMaster" value="yes" required /> Yes</label>
-      <label><input type="radio" name="pastMaster" value="no" required /> No</label>
+    <button id="google-signup" class="google-btn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
+      Sign up with Google
+    </button>
+
+    <div class="message" id="message"></div>
+
+    <div class="link">
+      Already have an account? <a href="index.html">Log In</a>
     </div>
-
-    <label class="birthday-label">Birthday (optional, for birthday listing):</label>
-    <input type="date" id="birthday" />
+  </div>
 
     <div id="recaptcha-container"></div>
     <button id="sign-up-button" onclick="register()">Sign Up</button>
@@ -128,7 +131,17 @@
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithPopup,
+      GoogleAuthProvider,
+      sendEmailVerification,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
       authDomain: "shidle-lodge-members.firebaseapp.com",
@@ -139,76 +152,51 @@
       measurementId: "G-2T6R765V2V"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    const message = document.getElementById("message");
 
-    let recaptchaVerifier;
-
-    window.onload = function () {
-      recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-up-button', {
-        size: 'invisible',
-        callback: register,
-        'expired-callback': () => {
-          document.getElementById("signupMessage").textContent = "reCAPTCHA expired, please try again.";
-        }
-      });
-      recaptchaVerifier.render();
-    };
-
-    async function register() {
-      const firstName = document.getElementById("firstName").value;
-      const lastName = document.getElementById("lastName").value;
-      const phone = document.getElementById("phone").value;
-      const email = document.getElementById("email").value;
+    document.getElementById("signup").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-      const birthday = document.getElementById("birthday").value;
-      const pastMaster = document.querySelector('input[name="pastMaster"]:checked')?.value;
-      const message = document.getElementById("signupMessage");
+      const confirm = document.getElementById("confirm-password").value;
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const displayName = `${firstName} ${lastName}`.trim();
 
-      if (password !== confirmPassword) {
+      if (password !== confirm) {
+        message.style.color = "red";
         message.textContent = "Passwords do not match.";
         return;
       }
 
       try {
-        const methods = await auth.fetchSignInMethodsForEmail(email);
-        if (methods.includes('password')) {
-          message.innerHTML = `You're already registered. <a href="https://members.shidlelodge601.org" style="color: #800000; text-decoration: underline;">Please sign in here</a>.`;
-          return;
-        }
-
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        await user.sendEmailVerification({ url: window.location.origin + "/home" });
-
-        await db.collection("members").doc(user.uid).set({
-          firstName,
-          lastName,
-          phone: phone || null,
-          email,
-          birthday: birthday || null,
-          pastMaster
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName });
+        await sendEmailVerification(userCredential.user, {
+          url: 'https://members.shidlelodge601.org/verified.html'
         });
-
-        if (phone) {
-          const confirmationResult = await auth.signInWithPhoneNumber(phone, recaptchaVerifier);
-          sessionStorage.setItem("verificationId", confirmationResult.verificationId);
-        }
-
-        document.getElementById("signupForm").innerHTML = `
-          <h2>Thank You for Registering</h2>
-          <p>A confirmation email has been sent from <strong>noreply@shidlelodge601.org</strong>.</p>
-          <p>Please check your inbox (and your spam folder) to verify your email before logging in.</p>
-        `;
+        message.style.color = "green";
+        message.innerHTML = "Signup successful! A verification email has been sent. Redirecting to login in 5 seconds...<br><br><a href='index.html'>Click here if not redirected.</a>";
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 5000);
       } catch (error) {
-        message.textContent = error.message;
-        if (window.grecaptcha && recaptchaVerifier) {
-          recaptchaVerifier.render().then(widgetId => grecaptcha.reset(widgetId));
-        }
+        message.style.color = "red";
+        message.textContent = "Signup error: " + error.message;
       }
-    }
+    });
+
+    document.getElementById("google-signup").addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+        window.location.href = "members.html";
+      } catch (error) {
+        message.style.color = "red";
+        message.textContent = "Google sign-in error: " + error.message;
+      }
+    });
   </script>
 </body>
 </html>
