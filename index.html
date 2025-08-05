@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Member Login | Shidle Lodge No. 601</title>
 
-  <!-- Google Fonts New Login 3 -->
+  <!-- Google Fonts New Login 4 -->
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- Firebase SDKs -->
@@ -186,69 +186,28 @@
       projectId: "shidle-lodge-members",
       storageBucket: "shidle-lodge-members.appspot.com",
       messagingSenderId: "293450171850",
-      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
-      measurementId: "G-2T6R765V2V"
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-
-    document.getElementById("togglePassword").addEventListener("change", function () {
-      const pwd = document.getElementById("password");
-      pwd.type = this.checked ? "text" : "password";
-    });
 
     async function signInWithEmail() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const remember = document.getElementById("rememberMe").checked;
-
-      const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
-      try {
-        await auth.setPersistence(persistence);
-        await auth.signInWithEmailAndPassword(email, password);
-      } catch (error) {
-        document.getElementById("loginMessage").textContent = error.message;
-      }
-    }
-
-    async function signInWithGoogle() {
-      const remember = document.getElementById("rememberMe").checked;
-      const provider = new firebase.auth.GoogleAuthProvider();
-
-      const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
-      try {
-        await auth.setPersistence(persistence);
-        await auth.signInWithPopup(provider);
-      } catch (error) {
-        document.getElementById("loginMessage").textContent = "Google sign-in failed: " + error.message;
-      }
-    }
-
-    function resetPassword() {
-      const email = document.getElementById("email").value;
       const message = document.getElementById("loginMessage");
 
-      if (!email) {
-        message.textContent = "Please enter your email above first.";
-        return;
-      }
+      const persistence = remember
+        ? firebase.auth.Auth.Persistence.LOCAL
+        : firebase.auth.Auth.Persistence.SESSION;
 
-      auth.sendPasswordResetEmail(email)
-        .then(() => {
-          message.style.color = "green";
-          message.textContent = "Password reset email sent. Check your inbox.";
-        })
-        .catch(error => {
-          message.style.color = "red";
-          message.textContent = "Reset failed: " + error.message;
-        });
-    }
+      try {
+        await auth.setPersistence(persistence);
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
 
-    auth.onAuthStateChanged(async user => {
-      const message = document.getElementById("loginMessage");
-      if (user) {
         await user.reload();
+
         if (!user.emailVerified) {
           message.innerHTML = `
             Your email is not verified. Please check your inbox (or spam).<br>
@@ -272,20 +231,31 @@
         } else {
           window.location.href = "/home";
         }
-
-        setTimeout(() => {
-          auth.signOut().then(() => {
-            window.location.href = 'index.html';
-          });
-        }, 30 * 60 * 1000);
+      } catch (error) {
+        message.textContent = error.message;
       }
+    }
+
+    function signInWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => {
+          if (result.user.emailVerified) {
+            window.location.href = "/home";
+          } else {
+            document.getElementById("loginMessage").textContent = "Your Google account must have a verified email.";
+            auth.signOut();
+          }
+        })
+        .catch(error => {
+          document.getElementById("loginMessage").textContent = error.message;
+        });
+    }
+
+    document.getElementById("showPassword").addEventListener("change", function () {
+      const passwordInput = document.getElementById("password");
+      passwordInput.type = this.checked ? "text" : "password";
     });
-const params = new URLSearchParams(window.location.search);
-if (params.get("verified") === "true") {
-  const msg = document.getElementById("loginMessage");
-  msg.style.color = "green";
-  msg.textContent = "Email verified! Please log in.";
-}    
   </script>
 </body>
 </html>
