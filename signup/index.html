@@ -98,7 +98,7 @@
 </head>
 <body>
   <header>
-    <a href="https://members.shidlelodge601.org/"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
+    <a href="members.shidlelodge601.org"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
   </header>
 
   <div class="signup-container">
@@ -106,8 +106,7 @@
     <input type="text" id="firstName" placeholder="First Name" required />
     <input type="text" id="lastName" placeholder="Last Name" required />
     <input type="email" id="email" placeholder="Email" required />
-    <input type="tel" id="phone" placeholder="Phone Number" required />
-
+    <input type="tel" id="phone" placeholder="Phone Number (optional, for 2FA)" />
     <input type="password" id="password" placeholder="Password" required />
     <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
 
@@ -120,9 +119,8 @@
     <label class="birthday-label">Birthday (optional, for birthday listing):</label>
     <input type="date" id="birthday" />
 
-    <div class="g-recaptcha" data-sitekey="6LeWn5srAAAAAG9hzVZMKA2yGcZhyacrgf4stN-S"></div>
-    <br>
-    <button onclick="register()">Sign Up</button>
+    <div id="recaptcha-container"></div>
+    <button id="sign-up-button" onclick="register()">Sign Up</button>
     <div class="message" id="signupMessage"></div>
   </div>
 
@@ -144,6 +142,18 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    let recaptchaVerifier;
+
+    window.onload = function () {
+      recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-up-button', {
+        size: 'invisible',
+        callback: function(response) {
+          register();
+        }
+      });
+      recaptchaVerifier.render();
+    };
+
     async function register() {
       const firstName = document.getElementById("firstName").value;
       const lastName = document.getElementById("lastName").value;
@@ -160,12 +170,6 @@
         return;
       }
 
-      const captchaResponse = grecaptcha.getResponse();
-      if (!captchaResponse) {
-        message.textContent = "Please complete the CAPTCHA.";
-        return;
-      }
-
       try {
         const approvedList = await db.collection("preapprovedEmails").doc(email).get();
         if (!approvedList.exists) {
@@ -176,17 +180,24 @@
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
+        await user.sendEmailVerification({ url: window.location.origin + "/verify-2fa.html" });
+
         await db.collection("members").doc(user.uid).set({
           firstName,
           lastName,
-          phone,
+          phone: phone || null,
           email,
           birthday: birthday || null,
           pastMaster
         });
 
+        if (phone) {
+          const appVerifier = recaptchaVerifier;
+          await auth.signInWithPhoneNumber(phone, appVerifier);
+        }
+
         message.style.color = "green";
-        message.textContent = "Account created successfully. You may now log in.";
+        message.textContent = "Account created. Please check your email to verify and continue with 2FA.";
       } catch (error) {
         message.textContent = error.message;
       }
