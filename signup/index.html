@@ -1,87 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Member Sign Up | Shidle Lodge No. 601</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Member Sign Up | Shidle Lodge No. 601</title>
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
-<script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 
-<style>
-body {
-margin: 0;
-font-family: 'Roboto', sans-serif;
-background-color: #f8f8f8;
-color: #000;
-line-height: 1.6;
-}
-header {
-background-color: #eee0cb;
-text-align: center;
-padding: 2rem 1rem;
-}
-header img {
-width: 260px;
-height: auto;
-}
-.signup-container {
-max-width: 400px;
-margin: 2rem auto;
-padding: 2rem;
-background: white;
-border-radius: 8px;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-.signup-container h2 {
-text-align: center;
-margin-bottom: 1rem;
-}
-input[type="email"],
-input[type="password"],
-input[type="text"],
-input[type="tel"],
-input[type="date"] {
-width: 100%;
-padding: 0.75rem;
-margin-bottom: 1rem;
-border: 1px solid #000;
-border-radius: 4px;
-font-size: 1rem;
-}
-.radio-group {
-margin-bottom: 1rem;
-}
-.radio-group label {
-margin-right: 1rem;
-}
-    button {
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f8f8;
+      color: #000;
+      line-height: 1.6;
+    }
+    header {
+      background-color: #eee0cb;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    header img {
+      width: 260px;
+      height: auto;
+    }
+    .signup-container {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .signup-container h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    input[type="email"],
+    input[type="password"],
+    input[type="text"],
+    input[type="tel"],
+    input[type="date"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #000;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .radio-group {
+      margin-bottom: 1rem;
+    }
+    .radio-group label {
+      margin-right: 1rem;
+    }
     button,
     .google-btn {
-width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
+      width: 100%;
       padding: 0.5rem;
       font-size: 0.9rem;
-border: none;
-border-radius: 4px;
-background-color: #eee0cb;
-color: #000;
-font-weight: bold;
-cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #eee0cb;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
       margin-bottom: 0.75rem;
-}
-    button:hover {
+    }
     button:hover,
     .google-btn:hover {
-background-color: #e0d2ba;
-}
+      background-color: #e0d2ba;
+    }
     .google-btn {
       display: flex;
       align-items: center;
@@ -92,138 +88,125 @@ background-color: #e0d2ba;
       width: 20px;
       height: 20px;
     }
-.message {
-text-align: center;
-margin-top: 1rem;
-color: red;
-font-weight: bold;
-}
-footer {
-background-color: #222;
-color: #ccc;
-text-align: center;
-padding: 2rem 1rem;
-margin-top: 3rem;
-font-size: 0.9rem;
-}
-.birthday-label {
-margin: 1rem 0 0.25rem;
-font-weight: bold;
-font-size: 0.9rem;
-}
-</style>
+    .message {
+      text-align: center;
+      margin-top: 1rem;
+      color: red;
+      font-weight: bold;
+    }
+    footer {
+      background-color: #222;
+      color: #ccc;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+    .birthday-label {
+      margin: 1rem 0 0.25rem;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-<header>
-<a href="https://members.shidlelodge601.org"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
-</header>
+  <header>
+    <a href="https://members.shidlelodge601.org"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
+  </header>
 
-  <div class="container">
   <div class="signup-container">
-<h2>Create Account</h2>
-<input type="text" id="firstName" placeholder="First Name" required />
-<input type="text" id="lastName" placeholder="Last Name" required />
-<input type="email" id="email" placeholder="Email" required />
-<input type="password" id="password" placeholder="Password" required />
-<input type="password" id="confirm-password" placeholder="Confirm Password" required />
-<button id="signup">Sign Up</button>
-
-<button id="google-signup" class="google-btn">
-<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
-Sign up with Google
-</button>
-
-<div class="message" id="message"></div>
-
-<div class="link">
-Already have an account? <a href="index.html">Log In</a>
-</div>
-</div>
-
-    <div id="recaptcha-container"></div>
-    <button id="sign-up-button" onclick="register()">Sign Up</button>
-    <div class="message" id="signupMessage"></div>
+    <h2>Create Account</h2>
+    <input type="text" id="firstName" placeholder="First Name" required />
+    <input type="text" id="lastName" placeholder="Last Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="password" id="confirm-password" placeholder="Confirm Password" required />
+    <button id="signup">Sign Up</button>
+    <button id="google-signup" class="google-btn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
+      Sign up with Google
+    </button>
+    <div class="message" id="message"></div>
+    <div class="link">
+      Already have an account? <a href="index.html">Log In</a>
+    </div>
   </div>
 
   <div id="recaptcha-container"></div>
-<footer>
-&copy; 2025 Shidle Lodge No. 601. All rights reserved.
-</footer>
+  <footer>
+    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
+  </footer>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import {
-getAuth,
-createUserWithEmailAndPassword,
-signInWithPopup,
-GoogleAuthProvider,
-sendEmailVerification,
-updateProfile
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithPopup,
+      GoogleAuthProvider,
+      sendEmailVerification,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
-authDomain: "shidle-lodge-members.firebaseapp.com",
-projectId: "shidle-lodge-members",
-storageBucket: "shidle-lodge-members.appspot.com",
-messagingSenderId: "293450171850",
-appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
-measurementId: "G-2T6R765V2V"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+      authDomain: "shidle-lodge-members.firebaseapp.com",
+      projectId: "shidle-lodge-members",
+      storageBucket: "shidle-lodge-members.appspot.com",
+      messagingSenderId: "293450171850",
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
+      measurementId: "G-2T6R765V2V"
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
-const provider = new GoogleAuthProvider();
-const message = document.getElementById("message");
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    const message = document.getElementById("message");
 
-document.getElementById("signup").addEventListener("click", async () => {
-const email = document.getElementById("email").value.trim();
-const password = document.getElementById("password").value;
-const confirm = document.getElementById("confirm-password").value;
-const firstName = document.getElementById("firstName").value.trim();
-const lastName = document.getElementById("lastName").value.trim();
-const displayName = `${firstName} ${lastName}`.trim();
+    document.getElementById("signup").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirm = document.getElementById("confirm-password").value;
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const displayName = `${firstName} ${lastName}`.trim();
 
-if (password !== confirm) {
-message.style.color = "red";
-message.textContent = "Passwords do not match.";
-return;
-}
+      if (password !== confirm) {
+        message.style.color = "red";
+        message.textContent = "Passwords do not match.";
+        return;
+      }
 
-try {
-const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-await updateProfile(userCredential.user, { displayName });
-await sendEmailVerification(userCredential.user, {
-url: 'https://members.shidlelodge601.org/verified.html'
-});
-message.style.color = "green";
-        message.innerHTML = "Signup successful! A verification email has been sent. Redirecting to login in 5 seconds...<br><br><a href='index.html'>Click here if not redirected.</a>";
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName });
+        await sendEmailVerification(userCredential.user, {
+          url: 'https://members.shidlelodge601.org/verified.html'
+        });
+        message.style.color = "green";
         message.innerHTML = "Signup successful! A verification email has been sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.<br><br>Redirecting to login in 5 seconds...<br><br><a href='https://members.shidlelodge601.org'>Click here if not redirected.</a>";
-setTimeout(() => {
-          window.location.href = "members.shidlelodge601.org";
+        setTimeout(() => {
           window.location.href = "https://members.shidlelodge601.org";
-}, 5000);
-} catch (error) {
-message.style.color = "red";
-        message.textContent = "Signup error: " + error.message;
+        }, 5000);
+      } catch (error) {
+        message.style.color = "red";
         if (error.code === 'auth/email-already-in-use') {
           message.innerHTML = `You're already registered. <a href='https://members.shidlelodge601.org' style='color:#800000; text-decoration:underline;'>Please sign in here</a>.`;
         } else {
           message.textContent = "Signup error: " + error.message;
         }
-}
-});
+      }
+    });
 
-document.getElementById("google-signup").addEventListener("click", async () => {
-try {
-await signInWithPopup(auth, provider);
-        window.location.href = "members.shidlelodge601.org/home";
+    document.getElementById("google-signup").addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
         window.location.href = "https://members.shidlelodge601.org/home";
-} catch (error) {
-message.style.color = "red";
-message.textContent = "Google sign-in error: " + error.message;
-}
-});
-</script>
+      } catch (error) {
+        message.style.color = "red";
+        message.textContent = "Google sign-in error: " + error.message;
+      }
+    });
+  </script>
 </body>
 </html>
