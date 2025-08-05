@@ -100,13 +100,15 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyCev2Nen2UzirnyjkV7lhW_2a3jcazdDaY",
-      authDomain: "bushy-run-members-site.firebaseapp.com",
-      projectId: "bushy-run-members-site",
-      storageBucket: "bushy-run-members-site.appspot.com",
-      messagingSenderId: "545538387619",
-      appId: "1:545538387619:web:758d450d1c746912ed9916"
+      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+      authDomain: "shidle-lodge-members.firebaseapp.com",
+      projectId: "shidle-lodge-members",
+      storageBucket: "shidle-lodge-members.firebasestorage.app",
+      messagingSenderId: "293450171850",
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
+      measurementId: "G-2T6R765V2V"
     };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
@@ -132,7 +134,7 @@
         message.style.color = "green";
         message.textContent = "Code verified. Redirecting...";
         setTimeout(() => {
-          window.location.href = "members.html";
+          window.location.href = "/home";
         }, 1000);
       } catch (error) {
         message.style.color = "red";
