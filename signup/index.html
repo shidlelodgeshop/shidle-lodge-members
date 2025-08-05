@@ -199,7 +199,8 @@
 
         document.getElementById("signupForm").innerHTML = `
           <h2>Thank You for Registering</h2>
-          <p>Please check your email to confirm your registration before logging in.</p>
+          <p>A confirmation email has been sent from <strong>noreply@shidlelodge601.org</strong>.</p>
+          <p>Please check your inbox (and your spam folder) to verify your email before logging in.</p>
         `;
       } catch (error) {
         message.textContent = error.message;
