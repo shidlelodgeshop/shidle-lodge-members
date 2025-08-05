@@ -98,7 +98,7 @@
 </head>
 <body>
   <header>
-    <a href="members.shidlelodge601.org"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
+    <a href="https://members.shidlelodge601.org"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
   </header>
 
   <div class="signup-container">
@@ -133,9 +133,10 @@
       apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
       authDomain: "shidle-lodge-members.firebaseapp.com",
       projectId: "shidle-lodge-members",
-      storageBucket: "shidle-lodge-members.firebasestorage.app",
+      storageBucket: "shidle-lodge-members.appspot.com",
       messagingSenderId: "293450171850",
-      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
+      measurementId: "G-2T6R765V2V"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -145,10 +146,10 @@
     let recaptchaVerifier;
 
     window.onload = function () {
-      recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-up-button', {
         size: 'invisible',
         callback: function(response) {
-          // reCAPTCHA solved, allow registration
+          register();
         }
       });
       recaptchaVerifier.render();
@@ -171,14 +172,10 @@
       }
 
       try {
-        const approvedList = await db.collection("preapprovedEmails").doc(email).get();
-        if (!approvedList.exists) {
-          message.textContent = "This email is not on the approved list. Please contact the lodge.";
-          return;
-        }
-
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
+
+        await user.sendEmailVerification({ url: window.location.origin + "/verify-2fa.html" });
 
         await db.collection("members").doc(user.uid).set({
           firstName,
@@ -190,18 +187,13 @@
         });
 
         if (phone) {
-          const appVerifier = recaptchaVerifier;
-          const confirmationResult = await auth.signInWithPhoneNumber(phone, appVerifier);
-          window.confirmationResult = confirmationResult;
+          const confirmationResult = await auth.signInWithPhoneNumber(phone, recaptchaVerifier);
+          sessionStorage.setItem("verificationId", confirmationResult.verificationId);
         }
-
-        await user.sendEmailVerification({ url: window.location.origin + "/verify-2fa.html" });
 
         message.style.color = "green";
         message.textContent = "Account created. Please check your email to verify and continue with 2FA.";
-
       } catch (error) {
-        message.style.color = "red";
         message.textContent = error.message;
       }
     }
