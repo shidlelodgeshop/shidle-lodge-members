@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Email Verified</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .box {
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 400px;
+    }
+    h1 {
+      color: #eee0cb;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1rem;
+      color: #333;
+      margin-top: 0.5rem;
+    }
+    .countdown {
+      font-weight: bold;
+      color: #800000;
+      font-size: 1.25rem;
+      margin-top: 1rem;
+    }
+    a {
+      color: #800000;
+      text-decoration: none;
+      font-weight: bold;
+      display: block;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Email Verified</h1>
+    <p>Your email has been successfully verified.</p>
+    <p>You’ll be redirected to the members area in <span class="countdown" id="counter">5</span> seconds.</p>
+    <a href="/home">Click here if not redirected</a>
+  </div>
+
+  <script>
+    let counter = 5;
+    const countdown = document.getElementById('counter');
+    const interval = setInterval(() => {
+      counter--;
+      countdown.textContent = counter;
+      if (counter === 0) {
+        clearInterval(interval);
+        window.location.href = 'members.html';
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
