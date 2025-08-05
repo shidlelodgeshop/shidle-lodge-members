@@ -148,10 +148,8 @@
     window.onload = function () {
       recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-up-button', {
         size: 'invisible',
-        callback: function(response) {
-          register();
-        },
-        'expired-callback': function() {
+        callback: register,
+        'expired-callback': () => {
           document.getElementById("signupMessage").textContent = "reCAPTCHA expired, please try again.";
         }
       });
@@ -175,9 +173,14 @@
       }
 
       try {
+        const methods = await auth.fetchSignInMethodsForEmail(email);
+        if (methods.includes('password')) {
+          message.innerHTML = `You're already registered. <a href="https://members.shidlelodge601.org" style="color: #800000; text-decoration: underline;">Please sign in here</a>.`;
+          return;
+        }
+
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
-
         await user.sendEmailVerification({ url: window.location.origin + "/home" });
 
         await db.collection("members").doc(user.uid).set({
@@ -200,7 +203,9 @@
         `;
       } catch (error) {
         message.textContent = error.message;
-        grecaptcha.reset();
+        if (window.grecaptcha && recaptchaVerifier) {
+          recaptchaVerifier.render().then(widgetId => grecaptcha.reset(widgetId));
+        }
       }
     }
   </script>
