@@ -130,12 +130,12 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyCev2Nen2UzirnyjkV7lhW_2a3jcazdDaY",
-      authDomain: "bushy-run-members-site.firebaseapp.com",
-      projectId: "bushy-run-members-site",
-      storageBucket: "bushy-run-members-site.appspot.com",
-      messagingSenderId: "545538387619",
-      appId: "1:545538387619:web:758d450d1c746912ed9916"
+      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+      authDomain: "shidle-lodge-members.firebaseapp.com",
+      projectId: "shidle-lodge-members",
+      storageBucket: "shidle-lodge-members.firebasestorage.app",
+      messagingSenderId: "293450171850",
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -145,10 +145,10 @@
     let recaptchaVerifier;
 
     window.onload = function () {
-      recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-up-button', {
+      recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
         size: 'invisible',
         callback: function(response) {
-          register();
+          // reCAPTCHA solved, allow registration
         }
       });
       recaptchaVerifier.render();
@@ -180,8 +180,6 @@
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        await user.sendEmailVerification({ url: window.location.origin + "/verify-2fa.html" });
-
         await db.collection("members").doc(user.uid).set({
           firstName,
           lastName,
@@ -193,12 +191,17 @@
 
         if (phone) {
           const appVerifier = recaptchaVerifier;
-          await auth.signInWithPhoneNumber(phone, appVerifier);
+          const confirmationResult = await auth.signInWithPhoneNumber(phone, appVerifier);
+          window.confirmationResult = confirmationResult;
         }
+
+        await user.sendEmailVerification({ url: window.location.origin + "/verify-2fa.html" });
 
         message.style.color = "green";
         message.textContent = "Account created. Please check your email to verify and continue with 2FA.";
+
       } catch (error) {
+        message.style.color = "red";
         message.textContent = error.message;
       }
     }
