@@ -61,19 +61,32 @@
     .radio-group label {
       margin-right: 1rem;
     }
-    button {
+    button,
+    .google-btn {
       width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
+      padding: 0.5rem;
+      font-size: 0.9rem;
       border: none;
       border-radius: 4px;
       background-color: #eee0cb;
       color: #000;
       font-weight: bold;
       cursor: pointer;
+      margin-bottom: 0.75rem;
     }
-    button:hover {
+    button:hover,
+    .google-btn:hover {
       background-color: #e0d2ba;
+    }
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .google-btn img {
+      width: 20px;
+      height: 20px;
     }
     .message {
       text-align: center;
@@ -101,7 +114,7 @@
     <a href="https://members.shidlelodge601.org"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
   </header>
 
-  <div class="container">
+  <div class="signup-container">
     <h2>Create Account</h2>
     <input type="text" id="firstName" placeholder="First Name" required />
     <input type="text" id="lastName" placeholder="Last Name" required />
@@ -109,24 +122,17 @@
     <input type="password" id="password" placeholder="Password" required />
     <input type="password" id="confirm-password" placeholder="Confirm Password" required />
     <button id="signup">Sign Up</button>
-
     <button id="google-signup" class="google-btn">
       <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
       Sign up with Google
     </button>
-
     <div class="message" id="message"></div>
-
     <div class="link">
       Already have an account? <a href="index.html">Log In</a>
     </div>
   </div>
 
-    <div id="recaptcha-container"></div>
-    <button id="sign-up-button" onclick="register()">Sign Up</button>
-    <div class="message" id="signupMessage"></div>
-  </div>
-
+  <div id="recaptcha-container"></div>
   <footer>
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
@@ -178,20 +184,24 @@
           url: 'https://members.shidlelodge601.org/verified.html'
         });
         message.style.color = "green";
-        message.innerHTML = "Signup successful! A verification email has been sent. Redirecting to login in 5 seconds...<br><br><a href='index.html'>Click here if not redirected.</a>";
+        message.innerHTML = "Signup successful! A verification email has been sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.<br><br>Redirecting to login in 5 seconds...<br><br><a href='https://members.shidlelodge601.org'>Click here if not redirected.</a>";
         setTimeout(() => {
-          window.location.href = "members.shidlelodge601.org";
+          window.location.href = "https://members.shidlelodge601.org";
         }, 5000);
       } catch (error) {
         message.style.color = "red";
-        message.textContent = "Signup error: " + error.message;
+        if (error.code === 'auth/email-already-in-use') {
+          message.innerHTML = `You're already registered. <a href='https://members.shidlelodge601.org' style='color:#800000; text-decoration:underline;'>Please sign in here</a>.`;
+        } else {
+          message.textContent = "Signup error: " + error.message;
+        }
       }
     });
 
     document.getElementById("google-signup").addEventListener("click", async () => {
       try {
         await signInWithPopup(auth, provider);
-        window.location.href = "members.shidlelodge601.org/home";
+        window.location.href = "https://members.shidlelodge601.org/home";
       } catch (error) {
         message.style.color = "red";
         message.textContent = "Google sign-in error: " + error.message;
