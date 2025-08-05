@@ -18,35 +18,96 @@
     }
     header {
       background-color: #eee0cb;
-      padding: 1rem;
+      padding: 1rem 2rem;
+      position: relative;
       text-align: center;
     }
     header img {
       width: 260px;
       height: auto;
     }
-    nav {
-      background-color: #222;
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      padding: 1rem 0;
+    .auth-links {
+      position: absolute;
+      top: 1rem;
+      right: 2rem;
     }
-    nav a {
-      color: #eee0cb;
-      text-decoration: none;
+    .auth-links a {
+      margin-left: 20px;
+      color: #00457c;
       font-weight: bold;
+      text-decoration: none;
+      font-size: 14px;
     }
-    nav a:hover {
+    .auth-links a:hover {
       text-decoration: underline;
     }
-    main {
-      max-width: 800px;
+    nav {
+      background-color: #00457c;
+      padding: 10px 0;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .navbar a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .navbar a:hover,
+    .navbar a.current {
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 900px;
       margin: 2rem auto;
       padding: 2rem;
       background: white;
-      border-radius: 8px;
+      border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .section, .masters-message {
+      margin-bottom: 40px;
+    }
+    .section h2, .masters-message h2 {
+      font-size: 22px;
+      color: #00457c;
+      border-left: 4px solid #00457c;
+      padding-left: 10px;
+      margin-bottom: 10px;
+    }
+    .masters-message {
+      background-color: #f0f4f8;
+      border-left: 6px solid #00457c;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      min-height: 190px;
+    }
+    .masters-message button {
+      margin: 10px;
+      padding: 8px 12px;
+      border: none;
+      background-color: #00457c;
+      color: white;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .notices-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .notices-list li {
+      margin-bottom: 10px;
+    }
+    .notices-list a {
+      color: #00457c;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .notices-list a:hover {
+      text-decoration: underline;
     }
     footer {
       background-color: #222;
@@ -56,19 +117,16 @@
       margin-top: 3rem;
       font-size: 0.9rem;
     }
-    h2 {
-      text-align: center;
-      margin-top: 0;
-    }
   </style>
 </head>
 <body>
   <header>
-    <a href="https://members.shidlelodge601.org/">
-      <a href="index.html"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
-    </a>
+    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+    <div class="auth-links">
+      <a href="/account">Account</a>
+      <a href="#" onclick="firebase.auth().signOut().then(() => window.location.href='https://members.shidlelodge601.org/')">Logout</a>
+    </div>
   </header>
-
 <nav>
   <div class="navbar">
     <a href="https://shidlelodge601.org/home" target="_top" class="current">Members Home</a>
