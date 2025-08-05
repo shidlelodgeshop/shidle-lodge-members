@@ -206,8 +206,9 @@
       try {
         await auth.setPersistence(persistence);
         const result = await auth.signInWithEmailAndPassword(email, password);
+await result.user.reload();
 
-        if (!result.user.emailVerified) {
+if (!auth.currentUser.emailVerified) {
           message.innerHTML = `
             Your email is not verified. Please check your inbox (or spam).<br>
             <button id="resend-verification">Resend Verification Email</button>
@@ -246,9 +247,11 @@
       const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
       try {
         await auth.setPersistence(persistence);
-        const result = await auth.signInWithPopup(provider);
+    const result = await auth.signInWithPopup(provider);
+await result.user.reload();
 
-        if (!result.user.emailVerified) {
+if (!auth.currentUser.emailVerified) {
+
           message.innerHTML = `
             Your email is not verified. Please check your inbox (or spam).<br>
             <button id="resend-verification">Resend Verification Email</button>
