@@ -194,7 +194,28 @@
       try {
         await auth.setPersistence(persistence);
         const result = await auth.signInWithEmailAndPassword(email, password);
+
+        if (!result.user.emailVerified) {
+          message.innerHTML = `
+            Your email is not verified. Please check your inbox (or spam).<br>
+            <button id="resend-verification">Resend Verification Email</button>
+          `;
+          document.getElementById("resend-verification").addEventListener("click", async () => {
+            try {
+              await result.user.sendEmailVerification({
+                url: "https://members.shidlelodge601.org/verified.html"
+              });
+              message.style.color = "green";
+              message.innerHTML = "Verification email sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.";
+            } catch (error) {
+              message.textContent = "Error sending verification email: " + error.message;
+            }
+          });
+          return;
+        }
+
         window.location.href = "/home";
+
       } catch (error) {
         if (error.code === 'auth/multi-factor-auth-required') {
           window.resolverData = error.resolver;
@@ -214,7 +235,28 @@
       try {
         await auth.setPersistence(persistence);
         const result = await auth.signInWithPopup(provider);
+
+        if (!result.user.emailVerified) {
+          message.innerHTML = `
+            Your email is not verified. Please check your inbox (or spam).<br>
+            <button id="resend-verification">Resend Verification Email</button>
+          `;
+          document.getElementById("resend-verification").addEventListener("click", async () => {
+            try {
+              await result.user.sendEmailVerification({
+                url: "https://members.shidlelodge601.org/verified.html"
+              });
+              message.style.color = "green";
+              message.innerHTML = "Verification email sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.";
+            } catch (error) {
+              message.textContent = "Error sending verification email: " + error.message;
+            }
+          });
+          return;
+        }
+
         window.location.href = "/home";
+
       } catch (error) {
         if (error.code === 'auth/multi-factor-auth-required') {
           window.resolverData = error.resolver;
@@ -245,14 +287,13 @@
         });
     }
 
-    // Auto sign-out after 30 minutes of inactivity and redirect
     auth.onAuthStateChanged(user => {
       if (user) {
         setTimeout(() => {
           auth.signOut().then(() => {
             window.location.href = 'index.html';
           });
-        }, 30 * 60 * 1000); // 30 minutes
+        }, 30 * 60 * 1000);
       }
     });
   </script>
