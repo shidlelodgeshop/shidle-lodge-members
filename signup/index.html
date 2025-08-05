@@ -12,7 +12,7 @@
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 
   <style>
     body {
@@ -101,7 +101,7 @@
     <a href="https://members.shidlelodge601.org"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
   </header>
 
-  <div class="signup-container">
+  <div class="signup-container" id="signupForm">
     <h2>Create an Account</h2>
     <input type="text" id="firstName" placeholder="First Name" required />
     <input type="text" id="lastName" placeholder="Last Name" required />
@@ -150,6 +150,9 @@
         size: 'invisible',
         callback: function(response) {
           register();
+        },
+        'expired-callback': function() {
+          document.getElementById("signupMessage").textContent = "reCAPTCHA expired, please try again.";
         }
       });
       recaptchaVerifier.render();
@@ -175,7 +178,7 @@
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        await user.sendEmailVerification({ url: window.location.origin + "/verify-2fa.html" });
+        await user.sendEmailVerification({ url: window.location.origin + "/home" });
 
         await db.collection("members").doc(user.uid).set({
           firstName,
@@ -191,10 +194,13 @@
           sessionStorage.setItem("verificationId", confirmationResult.verificationId);
         }
 
-        message.style.color = "green";
-        message.textContent = "Account created. Please check your email to verify and continue with 2FA.";
+        document.getElementById("signupForm").innerHTML = `
+          <h2>Thank You for Registering</h2>
+          <p>Please check your email to confirm your registration before logging in.</p>
+        `;
       } catch (error) {
         message.textContent = error.message;
+        grecaptcha.reset();
       }
     }
   </script>
