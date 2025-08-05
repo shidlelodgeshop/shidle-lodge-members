@@ -180,7 +180,7 @@
         message.style.color = "green";
         message.innerHTML = "Signup successful! A verification email has been sent. Redirecting to login in 5 seconds...<br><br><a href='index.html'>Click here if not redirected.</a>";
         setTimeout(() => {
-          window.location.href = "index.html";
+          window.location.href = "members.shidlelodge601.org";
         }, 5000);
       } catch (error) {
         message.style.color = "red";
@@ -191,7 +191,7 @@
     document.getElementById("google-signup").addEventListener("click", async () => {
       try {
         await signInWithPopup(auth, provider);
-        window.location.href = "members.html";
+        window.location.href = "members.shidlelodge601.org/home";
       } catch (error) {
         message.style.color = "red";
         message.textContent = "Google sign-in error: " + error.message;
