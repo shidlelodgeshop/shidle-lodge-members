@@ -193,7 +193,7 @@
       try {
         await auth.setPersistence(persistence);
         const result = await auth.signInWithEmailAndPassword(email, password);
-        window.location.href = "members.html";
+        window.location.href = "/home";
       } catch (error) {
         if (error.code === 'auth/multi-factor-auth-required') {
           window.resolverData = error.resolver;
@@ -213,7 +213,7 @@
       try {
         await auth.setPersistence(persistence);
         const result = await auth.signInWithPopup(provider);
-        window.location.href = "members.html";
+        window.location.href = "/home";
       } catch (error) {
         if (error.code === 'auth/multi-factor-auth-required') {
           window.resolverData = error.resolver;
