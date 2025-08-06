@@ -140,44 +140,30 @@
       <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
     </a>
   </header>
-
-  <div class="login-container">
+<body>
+  <div class="container">
     <h2>Account sign in</h2>
-    <p>Sign in to your account to access your profile, history, and private pages.</p>
+    <p style="text-align: center;">Sign in to your account to access your profile, history, and private pages.</p>
 
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
 
-    <div class="show-password">
-      <input type="checkbox" id="togglePassword"> <label for="togglePassword">Show password</label>
-    </div>
+    <label><input type="checkbox" id="showPassword"> Show password</label><br>
+    <label><input type="checkbox" id="rememberMe"> Remember me</label>
 
-    <div class="remember-container">
-      <input type="checkbox" id="rememberMe" />
-      <label for="rememberMe">Remember me</label>
-    </div>
-
-    <div class="forgot-password">
-      <a href="#" onclick="resetPassword()">Reset password</a>
-    </div>
+    <div class="text-link"><a href="reset.html">Reset password</a></div>
 
     <button onclick="signInWithEmail()">Sign in</button>
-
     <button class="google-btn" onclick="signInWithGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
-      Sign in with Google
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo"> Sign in with Google
     </button>
 
-    <div class="message" id="loginMessage"></div>
+    <div id="loginMessage"></div>
 
-    <div class="signup-link">
-      <a href="/signup">New member? Create an account</a>
+    <div class="text-link">
+      New member? <a href="signup.html">Create an account</a>
     </div>
   </div>
-
-  <footer>
-    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
-  </footer>
 
   <script>
     const firebaseConfig = {
@@ -203,34 +189,8 @@
 
       try {
         await auth.setPersistence(persistence);
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-
-        await user.reload();
-
-        if (!user.emailVerified) {
-          message.innerHTML = `
-            Your email is not verified. Please check your inbox (or spam).<br>
-            <button id="resend-verification">Resend Verification Email</button>
-          `;
-          document.getElementById("resend-verification").addEventListener("click", async () => {
-            try {
-              await user.sendEmailVerification({
-                url: "https://members.shidlelodge601.org/verified.html"
-              });
-              message.style.color = "green";
-              message.innerHTML = "Verification email sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.";
-            } catch (error) {
-              message.textContent = "Error sending verification email: " + error.message;
-            }
-          });
-
-          setTimeout(() => {
-            auth.signOut();
-          }, 5000);
-        } else {
-          window.location.href = "/home";
-        }
+        await auth.signInWithEmailAndPassword(email, password);
+        window.location.href = "/home";
       } catch (error) {
         message.textContent = error.message;
       }
@@ -240,12 +200,7 @@
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider)
         .then(result => {
-          if (result.user.emailVerified) {
-            window.location.href = "/home";
-          } else {
-            document.getElementById("loginMessage").textContent = "Your Google account must have a verified email.";
-            auth.signOut();
-          }
+          window.location.href = "/home";
         })
         .catch(error => {
           document.getElementById("loginMessage").textContent = error.message;
@@ -258,4 +213,3 @@
     });
   </script>
 </body>
-</html>
