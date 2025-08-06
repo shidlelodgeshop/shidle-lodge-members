@@ -147,7 +147,7 @@
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
 
-  <script type="module">
+ <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
   import {
     getAuth,
@@ -175,9 +175,9 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth();
+  const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
-  const db = getFirestore();
+  const db = getFirestore(app);
   const message = document.getElementById("message");
 
   document.getElementById("signup").addEventListener("click", async () => {
@@ -195,18 +195,24 @@
       message.textContent = "Passwords do not match.";
       return;
     }
+
+    try {
       // Check if email is in greenlist
       const greenRef = doc(db, "greenlist", email);
       const greenSnap = await getDoc(greenRef);
       if (!greenSnap.exists()) {
-  message.style.color = "red";
-  message.textContent = "Your email is not authorized to register. Please contact the Lodge Secretary.";
-  return;
-}
-const status = "approved";
+        message.style.color = "red";
+        message.textContent = "Your email is not authorized to register. Please contact the Lodge Secretary.";
+        return;
+      }
 
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName });
 
-      // Save user data with status and pastMaster
+      const uid = userCredential.user.uid;
+      const status = "approved";
+
+      // Save user data
       await setDoc(doc(db, "members", uid), {
         firstName,
         lastName,
@@ -226,6 +232,7 @@ const status = "approved";
       setTimeout(() => {
         window.location.href = "https://members.shidlelodge601.org";
       }, 5000);
+
     } catch (error) {
       message.style.color = "red";
       if (error.code === 'auth/email-already-in-use') {
