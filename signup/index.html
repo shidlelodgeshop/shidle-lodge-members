@@ -194,7 +194,15 @@
       message.textContent = "Passwords do not match.";
       return;
     }
-
+ // reCAPTCHA init
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+    'size': 'invisible',
+    'callback': (response) => {
+      console.log("reCAPTCHA passed:", response);
+    }
+  });
+  await recaptchaVerifier.render();
+    
     try {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   await updateProfile(userCredential.user, { displayName });
