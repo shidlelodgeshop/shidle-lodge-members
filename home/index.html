@@ -466,39 +466,41 @@ renderMessage(currentIndex);
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
 
-  <!-- Firebase + Auto-Logout Script -->
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
-      authDomain: "shidle-lodge-members.firebaseapp.com",
-      projectId: "shidle-lodge-members",
-      storageBucket: "shidle-lodge-members.appspot.com",
-      messagingSenderId: "293450171850",
-      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
-      measurementId: "G-2T6R765V2V"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // Logout after 30 minutes of page load
-    setTimeout(() => {
-      auth.signOut().then(() => {
-        window.location.href = "https://members.shidlelodge601.org/";
-      });
-    }, 30 * 60 * 1000);
-  </script>
+ <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+
 <script>
-  firebase.auth().onAuthStateChanged(async user => {
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+    authDomain: "shidle-lodge-members.firebaseapp.com",
+    projectId: "shidle-lodge-members",
+    storageBucket: "shidle-lodge-members.appspot.com",
+    messagingSenderId: "293450171850",
+    appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
+    measurementId: "G-2T6R765V2V"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // Auto logout after 30 minutes
+  setTimeout(() => {
+    auth.signOut().then(() => {
+      window.location.href = "https://members.shidlelodge601.org/";
+    });
+  }, 30 * 60 * 1000); // 30 minutes
+
+  // Greeting logic with Past Master check
+  auth.onAuthStateChanged(async user => {
     if (user && user.displayName) {
-      const db = firebase.firestore();
       try {
-        const doc = await db.collection("members").doc(user.uid).get();
-        const data = doc.exists ? doc.data() : {};
-        const pmSuffix = data.isPM ? ", PM" : "";
+        const docSnap = await db.collection("members").doc(user.uid).get();
+        const data = docSnap.exists ? docSnap.data() : {};
+        const pmSuffix = data.pastMaster === true ? ", PM" : "";
         document.getElementById("greeting").textContent = `Welcome, Brother ${user.displayName}${pmSuffix}`;
       } catch (error) {
         console.error("Failed to load Past Master status:", error);
@@ -507,6 +509,7 @@ renderMessage(currentIndex);
     }
   });
 </script>
+
 
 
 
