@@ -26,21 +26,39 @@
       width: 260px;
       height: auto;
     }
+    <style>
+  .auth-links {
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .auth-links a {
+    color: #00457c;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .auth-links a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
     .auth-links {
-      position: absolute;
-      top: 1rem;
-      right: 2rem;
+      position: static;
+      justify-content: center;
+      margin-top: 10px;
     }
-    .auth-links a {
-      margin-left: 20px;
-      color: #00457c;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 14px;
+
+    header {
+      padding-bottom: 0;
     }
-    .auth-links a:hover {
-      text-decoration: underline;
-    }
+  }
+
     nav {
       background-color: #00457c;
       padding: 10px 0;
