@@ -519,5 +519,83 @@ renderMessage(currentIndex);
       });
     }, 30 * 60 * 1000);
   </script>
+  <!-- Email Verification Overlay -->
+<div id="email-verification-overlay" style="display: none;">
+  <div class="overlay-content">
+    <h2>Please verify your email to access this content.</h2>
+    <p>A verification email has been sent to your registered email address.</p>
+    <button id="resend-verification-btn">Re-send Verification Email</button>
+    <p id="resend-message" style="margin-top: 10px;"></p>
+  </div>
+</div>
+
+<style>
+  #email-verification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(248, 248, 248, 0.97);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .overlay-content {
+    background: white;
+    border: 2px solid #00457c;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    max-width: 400px;
+  }
+
+  .overlay-content h2 {
+    color: #00457c;
+    margin-bottom: 15px;
+  }
+
+  #resend-verification-btn {
+    background-color: #00457c;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #resend-verification-btn:hover {
+    background-color: #003a6d;
+  }
+
+  #resend-message {
+    font-size: 14px;
+    color: #00457c;
+  }
+</style>
+
+<script>
+  firebase.auth().onAuthStateChanged(user => {
+    if (user && !user.emailVerified) {
+      document.getElementById('email-verification-overlay').style.display = 'flex';
+
+      document.getElementById('resend-verification-btn').addEventListener('click', () => {
+        user.sendEmailVerification()
+          .then(() => {
+            document.getElementById('resend-message').textContent = 'Verification email sent successfully.';
+          })
+          .catch(error => {
+            document.getElementById('resend-message').textContent = error.message || 'Error sending email.';
+          });
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
