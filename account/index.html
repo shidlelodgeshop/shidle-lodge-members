@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Account Management | Shidle Lodge No. 601</title>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -71,10 +69,18 @@
     input[type="password"] {
       width: 100%;
       padding: 10px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
       font-size: 16px;
+    }
+    .checkbox-inline {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+    .checkbox-inline input[type="checkbox"] {
+      margin-right: 8px;
     }
     button {
       background-color: #00457c;
@@ -89,6 +95,38 @@
     button:hover {
       background-color: #003a66;
     }
+    .message {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .message.success {
+      color: green;
+    }
+    .message.error {
+      color: red;
+    }
+    .strength-meter {
+      height: 8px;
+      background-color: #ccc;
+      border-radius: 5px;
+      margin-bottom: 8px;
+    }
+    .strength-weak {
+      background-color: red;
+      width: 33%;
+    }
+    .strength-medium {
+      background-color: orange;
+      width: 66%;
+    }
+    .strength-strong {
+      background-color: green;
+      width: 100%;
+    }
+    .strength-text {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
     footer {
       background-color: #222;
       color: #ccc;
@@ -99,10 +137,12 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
   </header>
+
   <nav>
     <div class="navbar">
       <a href="/home">Members Home</a>
@@ -113,35 +153,56 @@
       <a href="#" onclick="firebase.auth().signOut().then(() => window.location.href='https://members.shidlelodge601.org/')">Logout</a>
     </div>
   </nav>
+
   <div class="container">
     <div class="section">
       <h2>Update Contact Information</h2>
-      <form id="contact-form">
+      <form id="update-contact-form">
         <label for="name">Full Name</label>
-        <input type="text" id="name" placeholder="John Smith" />
+        <input type="text" id="name" />
+
         <label for="email">Email Address</label>
-        <input type="email" id="email" placeholder="your@email.com" />
+        <input type="email" id="email" />
+
         <label for="phone">Phone Number</label>
-        <input type="text" id="phone" placeholder="(123) 456-7890" />
+        <input type="text" id="phone" />
+
         <button type="submit">Update Info</button>
+        <div class="message" id="contact-message"></div>
       </form>
     </div>
+
     <div class="section">
       <h2>Change Password</h2>
-      <form id="password-form">
+      <form id="change-password-form">
         <label for="current-password">Current Password</label>
         <input type="password" id="current-password" />
+
         <label for="new-password">New Password</label>
         <input type="password" id="new-password" />
+        <div class="strength-meter" id="strength-bar"></div>
+        <div class="strength-text" id="strength-text"></div>
+
         <label for="confirm-password">Confirm New Password</label>
         <input type="password" id="confirm-password" />
+
+        <div class="checkbox-inline">
+          <input type="checkbox" id="toggle-password"> <label for="toggle-password">Show Passwords</label>
+        </div>
+
         <button type="submit">Change Password</button>
+        <div class="message" id="password-message"></div>
       </form>
     </div>
   </div>
+
   <footer>
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
@@ -149,61 +210,102 @@
       projectId: "shidle-lodge-members",
       storageBucket: "shidle-lodge-members.appspot.com",
       messagingSenderId: "293450171850",
-      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
-      measurementId: "G-2T6R765V2V"
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
     };
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
 
-    auth.onAuthStateChanged(user => {
-      if (!user) return window.location.href = "/";
+    const contactMessage = document.getElementById("contact-message");
+    const passwordMessage = document.getElementById("password-message");
 
-      document.getElementById("name").value = user.displayName || "";
-      document.getElementById("email").value = user.email || "";
-      db.collection("users").doc(user.uid).get().then(doc => {
-        if (doc.exists && doc.data().phone) {
-          document.getElementById("phone").value = doc.data().phone;
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("name").value = user.displayName || "";
+        document.getElementById("email").value = user.email || "";
+      } else {
+        window.location.href = "/";
+      }
+    });
+
+    document.getElementById("update-contact-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const user = firebase.auth().currentUser;
+      const displayName = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+
+      user.updateProfile({ displayName }).then(() => {
+        if (email !== user.email) {
+          return user.updateEmail(email);
         }
+      }).then(() => {
+        contactMessage.textContent = "Contact info updated!";
+        contactMessage.className = "message success";
+      }).catch(err => {
+        contactMessage.textContent = err.message;
+        contactMessage.className = "message error";
       });
+    });
 
-      document.getElementById("contact-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const fullName = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
+    document.getElementById("change-password-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const user = firebase.auth().currentUser;
+      const currentPassword = document.getElementById("current-password").value;
+      const newPassword = document.getElementById("new-password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
 
-        try {
-          await user.updateProfile({ displayName: fullName });
-          if (email !== user.email) {
-            await user.updateEmail(email);
-          }
-          await db.collection("users").doc(user.uid).set({ phone }, { merge: true });
-          alert("Information updated successfully.");
-        } catch (err) {
-          alert("Error updating info: " + err.message);
-        }
+      if (newPassword !== confirmPassword) {
+        passwordMessage.textContent = "New passwords do not match.";
+        passwordMessage.className = "message error";
+        return;
+      }
+
+      const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+
+      user.reauthenticateWithCredential(credential).then(() => {
+        return user.updatePassword(newPassword);
+      }).then(() => {
+        passwordMessage.textContent = "Password changed successfully.";
+        passwordMessage.className = "message success";
+      }).catch(err => {
+        passwordMessage.textContent = err.message;
+        passwordMessage.className = "message error";
       });
+    });
 
-      document.getElementById("password-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const currentPassword = document.getElementById("current-password").value;
-        const newPassword = document.getElementById("new-password").value;
-        const confirmPassword = document.getElementById("confirm-password").value;
+    document.getElementById("toggle-password").addEventListener("change", e => {
+      const type = e.target.checked ? "text" : "password";
+      document.getElementById("new-password").type = type;
+      document.getElementById("confirm-password").type = type;
+    });
 
-        if (newPassword !== confirmPassword) {
-          alert("New passwords do not match.");
-          return;
-        }
-        const cred = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
-        try {
-          await user.reauthenticateWithCredential(cred);
-          await user.updatePassword(newPassword);
-          alert("Password changed successfully.");
-        } catch (err) {
-          alert("Failed to change password: " + err.message);
-        }
-      });
+    document.getElementById("new-password").addEventListener("input", e => {
+      const strengthBar = document.getElementById("strength-bar");
+      const strengthText = document.getElementById("strength-text");
+      const val = e.target.value;
+      let strength = 0;
+
+      if (val.length >= 6) strength++;
+      if (/[A-Z]/.test(val)) strength++;
+      if (/[0-9]/.test(val)) strength++;
+      if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+      strengthBar.className = "strength-meter";
+      strengthText.textContent = "";
+
+      if (val.length === 0) return;
+
+      if (strength <= 1) {
+        strengthBar.classList.add("strength-weak");
+        strengthText.textContent = "Weak";
+        strengthText.style.color = "red";
+      } else if (strength === 2 || strength === 3) {
+        strengthBar.classList.add("strength-medium");
+        strengthText.textContent = "Medium";
+        strengthText.style.color = "orange";
+      } else {
+        strengthBar.classList.add("strength-strong");
+        strengthText.textContent = "Strong";
+        strengthText.style.color = "green";
+      }
     });
   </script>
 </body>
