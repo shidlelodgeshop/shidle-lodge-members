@@ -490,13 +490,24 @@ renderMessage(currentIndex);
       });
     }, 30 * 60 * 1000);
   </script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
 <script>
-  firebase.auth().onAuthStateChanged(user => {
+  firebase.auth().onAuthStateChanged(async user => {
     if (user && user.displayName) {
-      document.getElementById("greeting").textContent = `Welcome, Brother ${user.displayName}`;
+      const db = firebase.firestore();
+      try {
+        const doc = await db.collection("members").doc(user.uid).get();
+        const data = doc.exists ? doc.data() : {};
+        const pmSuffix = data.isPM ? ", PM" : "";
+        document.getElementById("greeting").textContent = `Welcome, Brother ${user.displayName}${pmSuffix}`;
+      } catch (error) {
+        console.error("Failed to load Past Master status:", error);
+        document.getElementById("greeting").textContent = `Welcome, Brother ${user.displayName}`;
+      }
     }
   });
 </script>
+
 
 
 </body>
