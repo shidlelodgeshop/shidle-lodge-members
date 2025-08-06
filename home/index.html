@@ -47,17 +47,21 @@
     text-decoration: underline;
   }
 
-  @media (max-width: 600px) {
-    .auth-links {
-      position: static;
-      justify-content: center;
-      margin-top: 10px;
-    }
-
-    header {
-      padding-bottom: 0;
-    }
+@media (max-width: 600px) {
+  .auth-links {
+    position: static;
+    justify-content: center;
+    margin-top: 10px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* <-- adds a little breathing room between links */
   }
+
+  header {
+    padding-bottom: 0;
+  }
+}
+
 
     nav {
       background-color: #00457c;
