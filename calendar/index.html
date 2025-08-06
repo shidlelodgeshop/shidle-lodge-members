@@ -9,6 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
+    .calendar-frame {
+  width: 100%;
+  min-height: 800px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* Make the calendar height adaptive on smaller devices */
+@media (max-width: 768px) {
+  .calendar-frame {
+    min-height: 1000px;
+  }
+}
+
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
