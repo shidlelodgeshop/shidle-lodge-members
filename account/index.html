@@ -333,5 +333,53 @@
       });
     });
   </script>
+  <script>
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      const memberRef = firebase.firestore().collection("members").doc(uid);
+
+      // Load existing data if available
+      memberRef.get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById("is-pm").checked = !!data.isPM;
+          document.getElementById("name").value = user.displayName || "";
+          document.getElementById("email").value = user.email || "";
+        }
+      });
+
+      // Save updates on form submit
+      document.getElementById("update-contact-form").addEventListener("submit", e => {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const isPM = document.getElementById("is-pm").checked;
+
+        // Update profile display name and email
+        user.updateProfile({ displayName: name }).then(() => {
+          if (email !== user.email) return user.updateEmail(email);
+        }).then(() => {
+          // Save PM status to Firestore
+          return memberRef.set({ isPM: isPM }, { merge: true });
+        }).then(() => {
+          showMessage("Account updated successfully", "success");
+        }).catch(err => {
+          showMessage("Error: " + err.message, "error");
+        });
+      });
+    }
+  });
+
+  function showMessage(msg, type) {
+    const box = document.getElementById("global-message");
+    box.className = `alert ${type}`;
+    box.textContent = msg;
+    box.style.display = "block";
+    setTimeout(() => { box.style.display = "none"; }, 5000);
+  }
+</script>
+
 </body>
 </html>
