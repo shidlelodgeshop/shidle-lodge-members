@@ -160,7 +160,8 @@
   import {
     getFirestore,
     doc,
-    setDoc
+    setDoc,
+    getDoc
   } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -194,46 +195,47 @@
       message.textContent = "Passwords do not match.";
       return;
     }
- // reCAPTCHA init
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-    'size': 'invisible',
-    'callback': (response) => {
-      console.log("reCAPTCHA passed:", response);
-    }
-  });
-  await recaptchaVerifier.render();
-    
+
+    // reCAPTCHA init
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      'size': 'invisible',
+      'callback': (response) => {
+        console.log("reCAPTCHA passed:", response);
+      }
+    });
+    await recaptchaVerifier.render();
+
     try {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  await updateProfile(userCredential.user, { displayName });
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName });
 
-  const uid = userCredential.user.uid;
+      const uid = userCredential.user.uid;
 
-  // Check if email is in greenlist
-  const greenRef = doc(db, "greenlist", email);
-  const greenSnap = await getDoc(greenRef);
-  const status = greenSnap.exists() ? "approved" : "pending";
+      // Check if email is in greenlist
+      const greenRef = doc(db, "greenlist", email);
+      const greenSnap = await getDoc(greenRef);
+      const status = greenSnap.exists() ? "approved" : "pending";
 
-  // Save user data with status and pastMaster
-  await setDoc(doc(db, "members", uid), {
-    firstName,
-    lastName,
-    email,
-    phone,
-    pastMaster,
-    status
-  });
+      // Save user data with status and pastMaster
+      await setDoc(doc(db, "members", uid), {
+        firstName,
+        lastName,
+        email,
+        phone,
+        pastMaster,
+        status
+      });
 
-  await sendEmailVerification(userCredential.user, {
-    url: 'https://members.shidlelodge601.org/verified.html'
-  });
+      await sendEmailVerification(userCredential.user, {
+        url: 'https://members.shidlelodge601.org/verified.html'
+      });
 
-  message.style.color = "green";
-  message.innerHTML = "Signup successful! A verification email has been sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.<br><br>Redirecting to login in 5 seconds...<br><br><a href='https://members.shidlelodge601.org'>Click here if not redirected.</a>";
+      message.style.color = "green";
+      message.innerHTML = "Signup successful! A verification email has been sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.<br><br>Redirecting to login in 5 seconds...<br><br><a href='https://members.shidlelodge601.org'>Click here if not redirected.</a>";
 
-  setTimeout(() => {
-    window.location.href = "https://members.shidlelodge601.org";
-  }, 5000);
+      setTimeout(() => {
+        window.location.href = "https://members.shidlelodge601.org";
+      }, 5000);
     } catch (error) {
       message.style.color = "red";
       if (error.code === 'auth/email-already-in-use') {
