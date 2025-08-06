@@ -167,6 +167,36 @@
       <a href="#" onclick="firebase.auth().signOut().then(() => window.location.href='https://members.shidlelodge601.org/')">Logout</a>
     </div>
   </nav>
+  <div class="alert-box">
+  <h1>If you need to update your Grand Lodge Information, please contact the <a href="mailto:shidlelodge@gmail.com?subject=Update%20Contact%20Information">Lodge Secretary</a></h1>
+</div>
+
+<style>
+  .alert-box {
+    background-color: #fff3f3;
+    border-left: 6px solid #c62828;
+    padding: 12px 20px;
+    margin: 20px 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  .alert-box h1 {
+    font-size: 22px;
+    font-weight: 500;
+    color: #c62828;
+    margin: 0;
+  }
+
+  .alert-box a {
+    color: #c62828;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  .alert-box a:hover {
+    text-decoration: none;
+  }
+</style>
   <div class="container">
     <div id="global-message" class="alert"></div>
     <div class="section">
@@ -185,7 +215,6 @@
     </div>
     <div class="section">
       <h2>Change Password</h2>
-      <h1>If you need to update your Grand Lodge Information, please contact the <a href="mailto:shidlelodge@gmail.com?subject='Update%20Member%20Contact%20Information'">Lodge Secretary</a>a></h1>
       <form id="change-password-form">
         <label for="current-password">Current Password</label>
         <input type="password" id="current-password" />
