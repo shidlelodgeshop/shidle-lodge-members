@@ -2,16 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Member Login | Shidle Lodge No. 601</title>
-
-  <!-- Google Fonts New Login 4 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Shidle Lodge Members</title>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -29,7 +24,7 @@
       width: 260px;
       height: auto;
     }
-    .login-container {
+    .signup-container {
       max-width: 400px;
       margin: 2rem auto;
       padding: 2rem;
@@ -37,39 +32,29 @@
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-    .login-container h2 {
+    .signup-container h2 {
       text-align: center;
       margin-bottom: 1rem;
-    }
-    .login-container p {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #333;
-      margin-bottom: 2rem;
     }
     input[type="email"],
-    input[type="password"],
-    input[type="text"] {
+    input[type="password"] {
       width: 100%;
       padding: 0.75rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       border: 1px solid #000;
       border-radius: 4px;
       font-size: 1rem;
     }
-    .remember-container {
-      display: flex;
-      align-items: center;
+    .text-link {
+      text-align: right;
       margin-bottom: 1rem;
-    }
-    .remember-container input[type="checkbox"] {
-      margin-right: 0.5rem;
+      font-size: 0.9rem;
     }
     button,
     .google-btn {
       width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
+      padding: 0.5rem;
+      font-size: 0.9rem;
       border: none;
       border-radius: 4px;
       background-color: #eee0cb;
@@ -77,51 +62,26 @@
       font-weight: bold;
       cursor: pointer;
       margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
     }
     button:hover,
     .google-btn:hover {
       background-color: #e0d2ba;
     }
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
     .google-btn img {
       width: 20px;
       height: 20px;
-    }
-    .forgot-password {
-      text-align: right;
-      margin: -0.5rem 0 1rem;
-    }
-    .forgot-password a {
-      font-size: 0.9rem;
-      color: black;
-      text-decoration: none;
-    }
-    .forgot-password a:hover {
-      text-decoration: underline;
-    }
-    .signup-link {
-      text-align: center;
-      margin-top: 1.5rem;
-    }
-    .signup-link a {
-      color: black;
-      font-weight: bold;
-      text-decoration: none;
-    }
-    .signup-link a:hover {
-      text-decoration: underline;
     }
     .message {
       text-align: center;
       margin-top: 1rem;
       color: red;
       font-weight: bold;
-    }
-    .show-password {
-      margin-bottom: 1rem;
     }
     footer {
       background-color: #222;
@@ -133,37 +93,37 @@
     }
   </style>
 </head>
-
 <body>
   <header>
-    <a href="https://members.shidlelodge601.org/">
+    <a href="https://members.shidlelodge601.org">
       <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
     </a>
   </header>
-<body>
-  <div class="container">
-    <h2>Account sign in</h2>
-    <p style="text-align: center;">Sign in to your account to access your profile, history, and private pages.</p>
+
+  <div class="signup-container">
+    <h2>Account Sign In</h2>
+    <p style="text-align: center;">Sign in to access your member content.</p>
 
     <input type="email" id="email" placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
 
-    <label><input type="checkbox" id="showPassword"> Show password</label><br>
-    <label><input type="checkbox" id="rememberMe"> Remember me</label>
-
-    <div class="text-link"><a href="reset.html">Reset password</a></div>
+    <div class="text-link"><a href="reset.html">Forgot password?</a></div>
 
     <button onclick="signInWithEmail()">Sign in</button>
     <button class="google-btn" onclick="signInWithGoogle()">
       <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo"> Sign in with Google
     </button>
 
-    <div id="loginMessage"></div>
+    <div class="message" id="loginMessage"></div>
 
-    <div class="text-link">
+    <div class="text-link" style="text-align: center;">
       New member? <a href="signup.html">Create an account</a>
     </div>
   </div>
+
+  <footer>
+    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
+  </footer>
 
   <script>
     const firebaseConfig = {
@@ -180,15 +140,9 @@
     async function signInWithEmail() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const remember = document.getElementById("rememberMe").checked;
       const message = document.getElementById("loginMessage");
 
-      const persistence = remember
-        ? firebase.auth.Auth.Persistence.LOCAL
-        : firebase.auth.Auth.Persistence.SESSION;
-
       try {
-        await auth.setPersistence(persistence);
         await auth.signInWithEmailAndPassword(email, password);
         window.location.href = "/home";
       } catch (error) {
@@ -199,17 +153,9 @@
     function signInWithGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider)
-        .then(result => {
-          window.location.href = "/home";
-        })
-        .catch(error => {
-          document.getElementById("loginMessage").textContent = error.message;
-        });
+        .then(() => window.location.href = "/home")
+        .catch(error => document.getElementById("loginMessage").textContent = error.message);
     }
-
-    document.getElementById("showPassword").addEventListener("change", function () {
-      const passwordInput = document.getElementById("password");
-      passwordInput.type = this.checked ? "text" : "password";
-    });
   </script>
 </body>
+</html>
