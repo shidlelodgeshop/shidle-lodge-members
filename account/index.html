@@ -167,8 +167,8 @@
         <label for="name">Full Name</label>
         <input type="text" id="name" />
         <div class="checkbox-inline">
-          <input type="checkbox" id="is-pm" name="is-pm">
-          <label for="is-pm">I am a Past Master</label>
+          <input type="checkbox" id="past-master" name="past-master">
+           <label for="past-master">I am a Past Master</label>
         </div>
         <label for="email">Email Address</label>
         <input type="email" id="email" />
@@ -198,65 +198,85 @@
   </footer>
 
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+    authDomain: "shidle-lodge-members.firebaseapp.com",
+    projectId: "shidle-lodge-members",
+    storageBucket: "shidle-lodge-members.appspot.com",
+    messagingSenderId: "293450171850",
+    appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
+  };
+  firebase.initializeApp(firebaseConfig);
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
-      authDomain: "shidle-lodge-members.firebaseapp.com",
-      projectId: "shidle-lodge-members",
-      storageBucket: "shidle-lodge-members.appspot.com",
-      messagingSenderId: "293450171850",
-      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
-    };
-    firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const globalMessage = document.getElementById("global-message");
 
-    const globalMessage = document.getElementById("global-message");
+  function showMessage(text, type = 'success') {
+    globalMessage.textContent = text;
+    globalMessage.className = `alert ${type}`;
+    globalMessage.style.display = 'block';
+    setTimeout(() => {
+      globalMessage.style.display = 'none';
+    }, 5000);
+  }
 
-    function showMessage(text, type = 'success') {
-      globalMessage.textContent = text;
-      globalMessage.className = `alert ${type}`;
-      globalMessage.style.display = 'block';
-      setTimeout(() => {
-        globalMessage.style.display = 'none';
-      }, 5000);
-    }
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) return window.location.href = "/";
 
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("name").value = user.displayName || "";
-        document.getElementById("email").value = user.email || "";
-      } else {
-        window.location.href = "/";
+    const uid = user.uid;
+    const memberRef = db.collection("members").doc(uid);
+
+    // Load existing member data
+    memberRef.get().then(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        const fullName = `${data.firstName || ""} ${data.lastName || ""}`.trim();
+        document.getElementById("name").value = fullName;
+        document.getElementById("email").value = data.email || user.email || "";
+        document.getElementById("past-master").checked = data.pastMaster === true;
       }
     });
 
+    // Handle contact update
     document.getElementById("update-contact-form").addEventListener("submit", e => {
       e.preventDefault();
-      const user = firebase.auth().currentUser;
-      const displayName = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const pastMaster = document.getElementById("past-master").checked;
 
-      user.updateProfile({ displayName }).then(() => {
+      const [firstName, ...rest] = name.split(" ");
+      const lastName = rest.join(" ");
+
+      user.updateProfile({ displayName: name }).then(() => {
         if (email !== user.email) {
           return user.updateEmail(email);
         }
       }).then(() => {
+        return memberRef.set({
+          firstName,
+          lastName,
+          email,
+          pastMaster
+        }, { merge: true });
+      }).then(() => {
         showMessage("Account updated successfully.");
       }).catch(err => {
-        showMessage("Error: " + err.message, 'error');
+        showMessage("Error: " + err.message, "error");
       });
     });
 
+    // Handle password change
     document.getElementById("change-password-form").addEventListener("submit", e => {
       e.preventDefault();
-      const user = firebase.auth().currentUser;
       const currentPassword = document.getElementById("current-password").value;
       const newPassword = document.getElementById("new-password").value;
       const confirmPassword = document.getElementById("confirm-password").value;
 
       if (newPassword !== confirmPassword) {
-        showMessage("New passwords do not match.", 'error');
+        showMessage("New passwords do not match.", "error");
         return;
       }
 
@@ -267,119 +287,71 @@
       }).then(() => {
         showMessage("Password changed successfully.");
       }).catch(err => {
-        if (err.code === 'auth/wrong-password') {
-          showMessage("Current password is incorrect.", 'error');
+        if (err.code === "auth/wrong-password") {
+          showMessage("Current password is incorrect.", "error");
         } else {
-          showMessage("Error: " + err.message, 'error');
-        }
-      });
-    });
-
-    document.getElementById("toggle-password").addEventListener("change", e => {
-      const type = e.target.checked ? "text" : "password";
-      document.getElementById("new-password").type = type;
-      document.getElementById("confirm-password").type = type;
-    });
-
-    document.getElementById("new-password").addEventListener("input", e => {
-      const strengthBar = document.getElementById("strength-bar");
-      const strengthText = document.getElementById("strength-text");
-      const val = e.target.value;
-      let strength = 0;
-
-      if (val.length >= 6) strength++;
-      if (/[A-Z]/.test(val)) strength++;
-      if (/[0-9]/.test(val)) strength++;
-      if (/[^A-Za-z0-9]/.test(val)) strength++;
-
-      strengthBar.className = "strength-meter";
-      strengthText.textContent = "";
-
-      if (val.length === 0) return;
-
-      if (strength <= 1) {
-        strengthBar.classList.add("strength-weak");
-        strengthText.textContent = "Weak";
-        strengthText.style.color = "red";
-      } else if (strength === 2 || strength === 3) {
-        strengthBar.classList.add("strength-medium");
-        strengthText.textContent = "Medium";
-        strengthText.style.color = "orange";
-      } else {
-        strengthBar.classList.add("strength-strong");
-        strengthText.textContent = "Strong";
-        strengthText.style.color = "green";
-      }
-    });
-  </script>
-
-
-  <script>
-    grecaptcha.ready(() => {
-      grecaptcha.execute('6LeVg5wrAAAAALonZpp4wO7-GI-tAp7_Bb3s8K-p', { action: 'account_update' }).then(token => {
-        // Add the token to the update-contact-form and change-password-form as hidden input
-        const contactForm = document.getElementById("update-contact-form");
-        const passForm = document.getElementById("change-password-form");
-
-        [contactForm, passForm].forEach(form => {
-          if (form && !form.querySelector('[name="recaptcha_token"]')) {
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "recaptcha_token";
-            input.value = token;
-            form.appendChild(input);
-          }
-        });
-      });
-    });
-  </script>
-  <script>
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      const uid = user.uid;
-      const memberRef = firebase.firestore().collection("members").doc(uid);
-
-      // Load existing data if available
-      memberRef.get().then(doc => {
-        if (doc.exists) {
-          const data = doc.data();
-          document.getElementById("is-pm").checked = !!data.isPM;
-          document.getElementById("name").value = user.displayName || "";
-          document.getElementById("email").value = user.email || "";
-        }
-      });
-
-      // Save updates on form submit
-      document.getElementById("update-contact-form").addEventListener("submit", e => {
-        e.preventDefault();
-
-        const name = document.getElementById("name").value;
-        const email = document.getElementById("email").value;
-        const isPM = document.getElementById("is-pm").checked;
-
-        // Update profile display name and email
-        user.updateProfile({ displayName: name }).then(() => {
-          if (email !== user.email) return user.updateEmail(email);
-        }).then(() => {
-          // Save PM status to Firestore
-          return memberRef.set({ isPM: isPM }, { merge: true });
-        }).then(() => {
-          showMessage("Account updated successfully", "success");
-        }).catch(err => {
           showMessage("Error: " + err.message, "error");
-        });
+        }
       });
+    });
+  });
+
+  // Toggle show/hide passwords
+  document.getElementById("toggle-password").addEventListener("change", e => {
+    const type = e.target.checked ? "text" : "password";
+    document.getElementById("new-password").type = type;
+    document.getElementById("confirm-password").type = type;
+  });
+
+  // Password strength meter
+  document.getElementById("new-password").addEventListener("input", e => {
+    const val = e.target.value;
+    const bar = document.getElementById("strength-bar");
+    const text = document.getElementById("strength-text");
+    let score = 0;
+
+    if (val.length >= 6) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    bar.className = "strength-meter";
+    text.textContent = "";
+
+    if (val.length === 0) return;
+
+    if (score <= 1) {
+      bar.classList.add("strength-weak");
+      text.textContent = "Weak";
+      text.style.color = "red";
+    } else if (score <= 3) {
+      bar.classList.add("strength-medium");
+      text.textContent = "Medium";
+      text.style.color = "orange";
+    } else {
+      bar.classList.add("strength-strong");
+      text.textContent = "Strong";
+      text.style.color = "green";
     }
   });
 
-  function showMessage(msg, type) {
-    const box = document.getElementById("global-message");
-    box.className = `alert ${type}`;
-    box.textContent = msg;
-    box.style.display = "block";
-    setTimeout(() => { box.style.display = "none"; }, 5000);
-  }
+  // reCAPTCHA token injection
+  grecaptcha.ready(() => {
+    grecaptcha.execute('6LeVg5wrAAAAALonZpp4wO7-GI-tAp7_Bb3s8K-p', { action: 'account_update' }).then(token => {
+      ['update-contact-form', 'change-password-form'].forEach(id => {
+        const form = document.getElementById(id);
+        if (form && !form.querySelector('[name="recaptcha_token"]')) {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "recaptcha_token";
+          input.value = token;
+          form.appendChild(input);
+        }
+      });
+    });
+  });
 </script>
+
 
 </body>
 </html>
