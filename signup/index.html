@@ -214,7 +214,13 @@
       // Check if email is in greenlist
       const greenRef = doc(db, "greenlist", email);
       const greenSnap = await getDoc(greenRef);
-      const status = greenSnap.exists() ? "approved" : "pending";
+      if (!greenSnap.exists()) {
+  message.style.color = "red";
+  message.textContent = "Your email is not authorized to register. Please contact the Lodge Secretary.";
+  return;
+}
+const status = "approved";
+
 
       // Save user data with status and pastMaster
       await setDoc(doc(db, "members", uid), {
