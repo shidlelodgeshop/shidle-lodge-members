@@ -96,6 +96,32 @@
     }
   </style>
 </head>
+   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+    authDomain: "shidle-lodge-members.firebaseapp.com",
+    projectId: "shidle-lodge-members",
+    storageBucket: "shidle-lodge-members.appspot.com",
+    messagingSenderId: "293450171850",
+    appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
+    measurementId: "G-2T6R765V2V"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById("name").value = user.displayName || "";
+      document.getElementById("email").value = user.email || "";
+      // phone is not stored by default unless you put it in Firestore
+    } else {
+      window.location.href = "/"; // optionally redirect if not logged in
+    }
+  });
+</script>
+
 <body>
   <header>
     <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
