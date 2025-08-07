@@ -8,6 +8,9 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
+  <!-- Font Awesome for password toggle icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
@@ -44,6 +47,7 @@
       margin-bottom: 1rem;
     }
     input[type="email"],
+    input[type="password"],
     input[type="text"],
     input[type="tel"],
     input[type="date"] {
@@ -56,23 +60,14 @@
     }
     .password-wrapper {
       position: relative;
-      margin-bottom: 1rem;
-    }
-    .password-wrapper input[type="password"] {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #000;
-      border-radius: 4px;
-      font-size: 1rem;
     }
     .toggle-password {
       position: absolute;
       top: 50%;
-      right: 10px;
+      right: 1rem;
       transform: translateY(-50%);
       cursor: pointer;
-      font-size: 1.1rem;
-      color: #555;
+      color: #666;
     }
     .radio-group {
       margin-bottom: 1rem;
@@ -97,16 +92,6 @@
     .google-btn:hover {
       background-color: #e0d2ba;
     }
-    .google-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-    .google-btn img {
-      width: 20px;
-      height: 20px;
-    }
     .message {
       text-align: center;
       margin-top: 1rem;
@@ -119,11 +104,6 @@
       text-align: center;
       padding: 2rem 1rem;
       margin-top: 3rem;
-      font-size: 0.9rem;
-    }
-    .birthday-label {
-      margin: 1rem 0 0.25rem;
-      font-weight: bold;
       font-size: 0.9rem;
     }
   </style>
@@ -140,17 +120,16 @@
     <input type="email" id="email" placeholder="Email" required />
     <input type="tel" id="phone" placeholder="Phone (optional)" />
 
-    <!-- Password fields with toggle -->
     <div class="password-wrapper">
       <input type="password" id="password" placeholder="Password" required />
-      <span class="toggle-password" toggle="#password">&#128065;</span>
-    </div>
-    <div class="password-wrapper">
-      <input type="password" id="confirm-password" placeholder="Confirm Password" required />
-      <span class="toggle-password" toggle="#confirm-password">&#128065;</span>
+      <span class="toggle-password" toggle="#password"><i class="fa fa-eye"></i></span>
     </div>
 
-    <!-- Past Master checkbox -->
+    <div class="password-wrapper">
+      <input type="password" id="confirm-password" placeholder="Confirm Password" required />
+      <span class="toggle-password" toggle="#confirm-password"><i class="fa fa-eye"></i></span>
+    </div>
+
     <div style="margin: 0.5rem 0; display: flex; align-items: center;">
       <input type="checkbox" id="past-master" style="margin-right: 0.5rem;" />
       <label for="past-master" style="font-size: 0.95rem;">I am a Past Master</label>
@@ -202,7 +181,7 @@
 
     document.getElementById("signup").addEventListener("click", function (e) {
       e.preventDefault();
-      grecaptcha.execute(); // trigger invisible reCAPTCHA
+      grecaptcha.execute();
     });
 
     window.onReCaptchaSuccess = async function () {
@@ -265,13 +244,14 @@
       }
     };
 
-    // Password visibility toggle
     document.querySelectorAll(".toggle-password").forEach((el) => {
       el.addEventListener("click", () => {
         const input = document.querySelector(el.getAttribute("toggle"));
-        const type = input.getAttribute("type") === "password" ? "text" : "password";
-        input.setAttribute("type", type);
-        el.innerHTML = type === "password" ? "&#128065;" : "&#128064;";
+        const icon = el.querySelector("i");
+        const isPassword = input.getAttribute("type") === "password";
+        input.setAttribute("type", isPassword ? "text" : "password");
+        icon.classList.toggle("fa-eye");
+        icon.classList.toggle("fa-eye-slash");
       });
     });
   </script>
