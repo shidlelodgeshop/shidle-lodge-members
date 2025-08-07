@@ -139,6 +139,7 @@
 
     const auth = firebase.auth();
     const db = firebase.firestore();
+    let loginDenied = false;
 
     async function checkIfApproved(email) {
       const doc = await db.collection("greenlist").doc(email).get();
@@ -171,6 +172,7 @@
           const email = result.user.email;
           const isApproved = await checkIfApproved(email);
           if (!isApproved) {
+            loginDenied = true;
             alert("Access denied. Contact the Lodge Secretary.");
             auth.signOut();
           } else {
@@ -183,7 +185,7 @@
     }
 
     auth.onAuthStateChanged(async (user) => {
-      if (user) {
+      if (user && !loginDenied) {
         const email = user.email;
         const isApproved = await checkIfApproved(email);
         if (isApproved) {
