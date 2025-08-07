@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Password | Shidle Lodge Members</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f8f8;
+      color: #000;
+      line-height: 1.6;
+    }
+    header {
+      background-color: #eee0cb;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    header img {
+      width: 260px;
+      height: auto;
+    }
+    .container {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    input[type="email"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #000;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      background-color: #eee0cb;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e0d2ba;
+    }
+    .message {
+      text-align: center;
+      margin-top: 1rem;
+      color: red;
+      font-weight: bold;
+    }
+    footer {
+      background-color: #222;
+      color: #ccc;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://members.shidlelodge601.org">
+      <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+    </a>
+  </header>
+
+  <div class="container">
+    <h2>Reset Password</h2>
+    <p style="text-align:center;">Enter your email address and we'll send you a link to reset your password.</p>
+
+    <input type="email" id="email" placeholder="Enter your email address" />
+    <button onclick="resetPassword()">Send Reset Link</button>
+
+    <div class="message" id="resetMessage"></div>
+  </div>
+
+  <footer>
+    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
+  </footer>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+      authDomain: "shidle-lodge-members.firebaseapp.com",
+      projectId: "shidle-lodge-members",
+      storageBucket: "shidle-lodge-members.appspot.com",
+      messagingSenderId: "293450171850",
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function resetPassword() {
+      const email = document.getElementById("email").value.trim();
+      const message = document.getElementById("resetMessage");
+
+      if (!email) {
+        message.textContent = "Please enter a valid email address.";
+        return;
+      }
+
+      auth.sendPasswordResetEmail(email)
+        .then(() => {
+          message.style.color = "green";
+          message.textContent = "Reset link sent. Please check your inbox (and spam folder).";
+        })
+        .catch((error) => {
+          message.style.color = "red";
+          message.textContent = "Error: " + error.message;
+        });
+    }
+  </script>
+</body>
+</html>
