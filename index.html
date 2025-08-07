@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
   <style>
     body {
       margin: 0;
@@ -117,7 +118,7 @@
     <div class="message" id="loginMessage"></div>
 
     <div class="text-link" style="text-align: center;">
-      New member? <a href="/signup">Create an account</a>
+      New member? <a href="/signup">Contact the Secretary</a>
     </div>
   </div>
 
@@ -135,7 +136,14 @@
       appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
     };
     firebase.initializeApp(firebaseConfig);
+
     const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    async function checkIfApproved(email) {
+      const doc = await db.collection("greenlist").doc(email).get();
+      return doc.exists && doc.data().approved === true;
+    }
 
     async function signInWithEmail() {
       const email = document.getElementById("email").value;
@@ -143,6 +151,12 @@
       const message = document.getElementById("loginMessage");
 
       try {
+        const isApproved = await checkIfApproved(email);
+        if (!isApproved) {
+          message.textContent = "Access denied. Contact the Lodge Secretary.";
+          return;
+        }
+
         await auth.signInWithEmailAndPassword(email, password);
         window.location.href = "/home";
       } catch (error) {
@@ -153,9 +167,33 @@
     function signInWithGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider)
-        .then(() => window.location.href = "/home")
-        .catch(error => document.getElementById("loginMessage").textContent = error.message);
+        .then(async (result) => {
+          const email = result.user.email;
+          const isApproved = await checkIfApproved(email);
+          if (!isApproved) {
+            alert("Access denied. Contact the Lodge Secretary.");
+            auth.signOut();
+          } else {
+            window.location.href = "/home";
+          }
+        })
+        .catch(error => {
+          document.getElementById("loginMessage").textContent = error.message;
+        });
     }
+
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const email = user.email;
+        const isApproved = await checkIfApproved(email);
+        if (isApproved) {
+          window.location.href = "/home";
+        } else {
+          alert("Access denied. Contact the Lodge Secretary.");
+          auth.signOut();
+        }
+      }
+    });
   </script>
 </body>
 </html>
