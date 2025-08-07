@@ -2,9 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Email Verified</title>
+  <title>Shidle Lodge | Verifying...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <style>
+    body {
+      font-family: Roboto, sans-serif;
+      background-color: #f8f8f8;
+      text-align: center;
+      padding: 4rem 1rem;
+      color: #222;
+    }
+    h1 {
+      color: #800000;
+    }
+    .message {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Shidle Lodge No. 601</h1>
+  <p class="message">Processing your request...</p>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
@@ -14,25 +36,34 @@
       messagingSenderId: "293450171850",
       appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
     };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    auth.onAuthStateChanged(async user => {
-      if (user) {
-        await user.reload();
-        if (user.emailVerified) {
-          await auth.signOut();
-          window.location.href = "/?verified=true";
-        } else {
-          document.body.innerHTML = "Email is still not verified. Try again.";
-        }
-      } else {
-        window.location.href = "/";
-      }
-    });
+    const messageEl = document.querySelector(".message");
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get("mode");
+    const oobCode = params.get("oobCode");
+
+    if (mode === "verifyEmail" && oobCode) {
+      // Handle email verification
+      firebase.auth().applyActionCode(oobCode)
+        .then(() => {
+          messageEl.textContent = "✅ Email verified! Redirecting to login...";
+          setTimeout(() => {
+            window.location.href = "/index.html?verified=true";
+          }, 3000);
+        })
+        .catch((error) => {
+          messageEl.textContent = `❌ Error verifying email: ${error.message}`;
+        });
+
+    } else if (mode === "resetPassword" && oobCode) {
+      // Redirect to password reset handler page
+      window.location.href = `/password-reset.html?oobCode=${encodeURIComponent(oobCode)}&mode=resetPassword`;
+    } else {
+      messageEl.textContent = "❌ Invalid or missing link. Please check your email.";
+    }
   </script>
-</head>
-<body>
-  <p>Verifying your email...</p>
 </body>
 </html>
