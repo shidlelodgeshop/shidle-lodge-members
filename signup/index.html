@@ -130,10 +130,6 @@
   </div>
 
   <button id="signup">Sign Up</button>
-  <button id="google-signup" class="google-btn">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
-    Sign up with Google
-  </button>
 
   <div class="message" id="message"></div>
   <div class="link">
@@ -240,16 +236,6 @@
       } else {
         message.textContent = "Signup error: " + error.message;
       }
-    }
-  });
-
-  document.getElementById("google-signup").addEventListener("click", async () => {
-    try {
-      await signInWithPopup(auth, provider);
-      window.location.href = "https://members.shidlelodge601.org/home";
-    } catch (error) {
-      message.style.color = "red";
-      message.textContent = "Google sign-in error: " + error.message;
     }
   });
 </script>
