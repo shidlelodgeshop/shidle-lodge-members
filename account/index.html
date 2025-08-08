@@ -74,15 +74,16 @@
       color: #333;
     }
     input[type="text"],
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 16px;
-    }
+input[type="email"],
+input[type="password"],
+input[type="tel"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
     .checkbox-inline {
       margin-bottom: 15px;
       display: flex;
@@ -204,26 +205,22 @@
       <h2>Update Contact Information</h2>
      <form id="update-contact-form">
   <label for="name">Full Name</label>
-  <input type="text" id="name" name="name" />
+  <input type="text" id="name" class="input-field" />
 
   <div class="checkbox-inline">
-    <input type="checkbox" id="past-master" name="past-master" />
+    <input type="checkbox" id="past-master" name="past-master">
     <label for="past-master">I am a Past Master</label>
   </div>
 
   <label for="email">Email Address</label>
-  <input type="email" id="email" name="email" />
+  <input type="email" id="email" class="input-field" />
 
   <label for="phone">Phone Number</label>
-  <input
-    type="tel"
-    id="phone"
-    name="phone"
-    placeholder="123-456-7890"
-    inputmode="tel"
-  />
+  <input type="tel" id="phone" class="input-field" />
 
-  <button type="submit">Update Info</button>
+  <div style="margin-top: 15px;">
+    <button type="submit">Update Info</button>
+  </div>
 </form>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
