@@ -222,28 +222,6 @@ input[type="tel"] {
     <button type="submit">Update Info</button>
   </div>
 </form>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const phoneInput = document.getElementById("phone");
-
-    phoneInput.addEventListener("input", function (e) {
-      let value = phoneInput.value.replace(/\D/g, "").slice(0, 10); // Only digits, max 10
-      let formatted = "";
-
-      if (value.length > 0) {
-        formatted += value.slice(0, 3);
-      }
-      if (value.length >= 4) {
-        formatted += "-" + value.slice(3, 6);
-      }
-      if (value.length >= 7) {
-        formatted += "-" + value.slice(6, 10);
-      }
-
-      phoneInput.value = formatted;
-    });
-  });
-</script>
     </div>
     <div class="section">
       <h2>Change Password</h2>
@@ -424,7 +402,30 @@ input[type="tel"] {
     });
   });
 </script>
+<script>
+  function formatPhone(value) {
+    const cleaned = value.replace(/\D/g, '').substring(0, 10);
+    const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
+    if (match) {
+      return !match[2]
+        ? match[1]
+        : `(${match[1]}) ${match[2]}${match[3] ? '-' + match[3] : ''}`;
+    }
+    return value;
+  }
 
+  // Auto-format existing value on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    const phoneInput = document.getElementById('phone');
+    phoneInput.value = formatPhone(phoneInput.value);
+  });
+
+  // Format as you type
+  document.getElementById('phone').addEventListener('input', function (e) {
+    const input = e.target;
+    input.value = formatPhone(input.value);
+  });
+</script>
 
 </body>
 </html>
