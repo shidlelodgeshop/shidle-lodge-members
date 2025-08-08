@@ -122,9 +122,113 @@
 
   <h1>Members Lodge Calendar</h1>
 
-  <div class="container">
-    <iframe class="calendar-frame" src="https://calendar.google.com/calendar/embed?src=796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com&ctz=America%2FNew_York" frameborder="0" scrolling="no"></iframe>
+  <div id="events">Loading events...</div>
+  <div class="pagination">
+    <button id="prev">Previous</button>
+    <button id="next">Next</button>
+  </div>
 
+  <script>
+    const icsUrl = "https://calendar.google.com/calendar/ical/796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com/public/basic.ics";
+    let events = [], page = 0, pageSize = 3;
+
+    function parseICSEvents(icsText) {
+      const lines = icsText.split(/\r?\n/);
+      const events = [];
+      let event = null;
+
+      lines.forEach(line => {
+        if (line.startsWith("BEGIN:VEVENT")) {
+          event = {};
+        } else if (line.startsWith("SUMMARY:")) {
+          event.summary = line.replace("SUMMARY:", "");
+        } else if (line.startsWith("LOCATION:")) {
+          event.location = line.replace("LOCATION:", "");
+        } else if (line.startsWith("DTSTART")) {
+          const dt = line.split(":")[1];
+          event.start = parseICSTime(dt);
+        } else if (line.startsWith("DTEND")) {
+          const dt = line.split(":")[1];
+          event.end = parseICSTime(dt);
+        } else if (line.startsWith("END:VEVENT")) {
+          if (event && event.start && event.end) {
+            events.push(event);
+          }
+        }
+      });
+
+      return events.sort((a, b) => a.start - b.start);
+    }
+
+    function parseICSTime(str) {
+      const parts = /^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z?$/.exec(str);
+      if (!parts) return null;
+      return new Date(Date.UTC(
+        parseInt(parts[1]),
+        parseInt(parts[2]) - 1,
+        parseInt(parts[3]),
+        parseInt(parts[4]),
+        parseInt(parts[5]),
+        parseInt(parts[6])
+      ));
+    }
+
+    function displayEvents() {
+      const container = document.getElementById("events");
+      const start = page * pageSize;
+      const paged = events.slice(start, start + pageSize);
+
+      if (paged.length === 0) {
+        container.innerHTML = '<p>No upcoming events found.</p>';
+        return;
+      }
+
+      container.innerHTML = paged.map(ev => `
+        <div class="event">
+          <div class="event-date">
+            ${ev.start.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} 
+            ${ev.start.getFullYear()}</div>
+          <div class="event-summary">
+            <strong>${ev.summary}</strong><br>
+            ${ev.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
+            ${ev.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}<br>
+            ${ev.location || ''}
+          </div>
+        </div>
+      `).join("");
+
+      document.getElementById("prev").disabled = (page === 0);
+      document.getElementById("next").disabled = ((page + 1) * pageSize >= events.length);
+    }
+
+    document.getElementById("prev").addEventListener("click", () => {
+      if (page > 0) {
+        page--;
+        displayEvents();
+      }
+    });
+
+    document.getElementById("next").addEventListener("click", () => {
+      if ((page + 1) * pageSize < events.length) {
+        page++;
+        displayEvents();
+      }
+    });
+
+    fetch(icsUrl)
+      .then(response => {
+        if (!response.ok) throw new Error("Failed to fetch calendar.");
+        return response.text();
+      })
+      .then(data => {
+        events = parseICSEvents(data);
+        displayEvents();
+      })
+      .catch(err => {
+        document.getElementById("events").textContent = "Could not load events.";
+        console.error("Fetch error:", err);
+      });
+  </script>
     <div class="extras">
       <p>
          <a href="webcal://calendar.google.com/calendar/ical/796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com/public/basic.ics" target="_blank">
