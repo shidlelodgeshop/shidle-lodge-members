@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Account Management | Shidle Lodge No. 601</title>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+    authDomain: "shidle-lodge-members.firebaseapp.com",
+    projectId: "shidle-lodge-members"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
   <script src="https://www.google.com/recaptcha/api.js?render=6LeVg5wrAAAAALonZpp4wO7-GI-tAp7_Bb3s8K-p"></script>
   <style>
     body {
