@@ -102,6 +102,21 @@
       margin-top: 3rem;
       font-size: 0.9rem;
     }
+    .event {
+      padding: 10px;
+      margin-bottom: 15px;
+      background: #fff;
+      border-left: 4px solid #00457c;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .event-date {
+      font-weight: bold;
+      color: #333;
+    }
+    .event-summary {
+      margin-top: 5px;
+    }
     .pagination {
       display: flex;
       justify-content: space-between;
@@ -122,7 +137,6 @@
   </style>
 </head>
 <body>
-
   <header>
     <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
   </header>
@@ -195,11 +209,6 @@
       const start = page * pageSize;
       const paged = events.slice(start, start + pageSize);
 
-      if (paged.length === 0) {
-        container.innerHTML = '<p>No upcoming events found.</p>';
-        return;
-      }
-
       container.innerHTML = paged.map(ev => `
         <div class="event">
           <div class="event-date">
@@ -243,7 +252,7 @@
       })
       .catch(err => {
         document.getElementById("events").textContent = "Could not load events.";
-        console.error("Fetch error:", err);
+        console.error(err);
       });
   </script>
     <div class="extras">
