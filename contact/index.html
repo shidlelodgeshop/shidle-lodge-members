@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact the Lodge | Shidle Lodge No. 601</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f8f8;
+      color: #000;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: #eee0cb;
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+
+    header img {
+      width: 260px;
+      height: auto;
+    }
+
+    .auth-links {
+      position: absolute;
+      top: 1rem;
+      right: 2rem;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .auth-links a {
+      color: #00457c;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .auth-links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .auth-links {
+        position: static;
+        justify-content: center;
+        margin-top: 10px;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      header {
+        padding-bottom: 0;
+      }
+    }
+
+    nav {
+      background-color: #00457c;
+      padding: 10px 0;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .navbar a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .navbar a:hover,
+    .navbar a.current {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #eee0cb;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: block;
+      margin: 2rem auto 0 auto;
+      border-radius: 4px;
+    }
+
+    #thank-you-message {
+      display: none;
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 1.1rem;
+      color: green;
+    }
+
+    footer {
+      background-color: #222;
+      color: #ccc;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+  </header>
+
+  <nav>
+    <div class="navbar">
+      <a href="/home" target="_top">Members Home</a>
+      <a href="/dues" target="_top">Dues</a>
+      <a href="/calendar" target="_top">Calendar</a>
+      <a href="/monthly-notices" target="_top">Notices</a>
+      <a href="/account">Account</a>
+      <a href="#" onclick="firebase.auth().signOut().then(() => window.location.href='https://members.shidlelodge601.org/')">Logout</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h2>Contact the Lodge</h2>
+    <p style="text-align: center;">
+      Use the form below to contact the Secretary. You may ask a general question, request assistance, or notify us of a brother in need.
+    </p>
+
+    <form id="contact-form">
+      <label>
+        Your Name:
+        <input type="text" name="name" required>
+      </label>
+
+      <label>
+        Your Email:
+        <input type="email" name="email" required>
+      </label>
+
+      <label>
+        Phone Number (optional):
+        <input type="tel" name="phone">
+      </label>
+
+      <label>
+        Reason for Contact:
+        <select name="reason" required>
+          <option value="">-- Please select --</option>
+          <option>General Question</option>
+          <option>Request a Ride</option>
+          <option>Report Sickness or Distress</option>
+          <option>Interest in Joining</option>
+          <option>Submit a Suggestion</option>
+          <option>Other</option>
+        </select>
+      </label>
+
+      <label>
+        Your Message:
+        <textarea name="message" rows="6" required></textarea>
+      </label>
+
+      <button type="submit">Send Message</button>
+    </form>
+
+    <div id="thank-you-message">
+      Thank you for contacting us. The Secretary will be in touch shortly.
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
+  </footer>
+
+  <script>
+    const form = document.getElementById("contact-form");
+    const thankYouMessage = document.getElementById("thank-you-message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const action = "https://formspree.io/f/mwpqwbnn";
+
+      const response = await fetch(action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        form.reset();
+        form.style.display = "none";
+        thankYouMessage.style.display = "block";
+      } else {
+        alert("There was a problem submitting your form. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
