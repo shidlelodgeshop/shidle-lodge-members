@@ -135,6 +135,7 @@
       font-size: 0.9rem;
     }
   </style>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
   <header>
@@ -194,7 +195,7 @@
         Your Message:
         <textarea name="message" rows="6" required></textarea>
       </label>
-
+<div class="g-recaptcha" data-sitekey="6LeVg5wrAAAAALonZpp4wO7-GI-tAp7_Bb3s8K-p"></div>
       <button type="submit">Send Message</button>
     </form>
 
@@ -208,15 +209,24 @@
   </footer>
 
   <script>
-    const form = document.getElementById("contact-form");
-    const thankYouMessage = document.getElementById("thank-you-message");
+  const form = document.getElementById("contact-form");
+  const thankYouMessage = document.getElementById("thank-you-message");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const formData = new FormData(form);
-      const action = "https://formspree.io/f/mwpqwbnn";
+    const captchaResponse = grecaptcha.getResponse();
+    if (!captchaResponse) {
+      alert("Please complete the CAPTCHA.");
+      return;
+    }
 
+    const formData = new FormData(form);
+    formData.append("g-recaptcha-response", captchaResponse);
+
+    const action = "https://formspree.io/f/mwpqwbnn";
+
+    try {
       const response = await fetch(action, {
         method: "POST",
         body: formData,
@@ -227,12 +237,17 @@
 
       if (response.ok) {
         form.reset();
+        grecaptcha.reset();
         form.style.display = "none";
         thankYouMessage.style.display = "block";
       } else {
         alert("There was a problem submitting your form. Please try again.");
       }
-    });
-  </script>
+    } catch (error) {
+      alert("An error occurred. Please try again later.");
+    }
+  });
+</script>
+
 </body>
 </html>
