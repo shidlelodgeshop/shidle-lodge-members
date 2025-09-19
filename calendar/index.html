@@ -10,115 +10,90 @@
 
   <style>
     body {
-      display: none; /* Hide content until login verified */
+      display: none; /* Hide until login verified */
       margin: 0;
       font-family: 'Roboto', sans-serif;
       background-color: #f8f8f8;
       color: #000;
       line-height: 1.6;
     }
-
     header {
       background-color: #eee0cb;
-      padding: 1rem 2rem;
       text-align: center;
+      padding: 1rem 0;
     }
+    header img { width: 260px; height: auto; }
 
-    header img {
-      width: 260px;
-      height: auto;
+    /* Navbar */
+    nav.navbar { background-color: #00457c; padding: 0.5rem 1rem; }
+    .nav-container {
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1100px; margin: 0 auto;
     }
-
-    nav {
-      background-color: #00457c;
-      padding: 10px 0;
-      text-align: center;
-      margin-bottom: 20px;
+    .nav-links { display: flex; gap: 1rem; }
+    .nav-links a {
+      color: white; text-decoration: none; font-weight: 600; font-size: 16px;
     }
-
-    nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 16px;
+    .nav-links a:hover, .nav-links a.current { text-decoration: underline; }
+    .hamburger {
+      display: none; font-size: 28px; color: white; background: none; border: none; cursor: pointer;
     }
-
-    nav a:hover,
-    nav a.current {
-      text-decoration: underline;
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .nav-links {
+        display: none; flex-direction: column; width: 100%;
+        background-color: #00457c; padding: 1rem 0;
+      }
+      .nav-links a { padding: 0.75rem; text-align: center; display: block; }
+      .nav-links.show { display: flex; }
     }
 
     h1 {
-      font-size: 32px;
-      color: #00457c;
-      text-align: center;
-      margin: 20px 0;
+      font-size: 32px; color: #00457c; text-align: center; margin: 20px 0;
     }
-
     .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 900px; margin: 0 auto; background: #ffffff;
+      padding: 2rem; border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-
     iframe.calendar-frame {
-      width: 100%;
-      min-height: 800px;
-      border: none;
-      border-radius: 8px;
+      width: 100%; min-height: 800px;
+      border: none; border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
-
     @media (max-width: 768px) {
-      iframe.calendar-frame {
-        min-height: 1000px;
-      }
+      iframe.calendar-frame { min-height: 1000px; }
     }
-
     .extras p {
-      font-size: 16px;
-      text-align: center;
-      margin-top: 20px;
+      font-size: 16px; text-align: center; margin-top: 20px;
     }
-
-    .extras a {
-      font-weight: 600;
-      color: #00457c;
-      text-decoration: none;
-    }
-
-    .extras a:hover {
-      text-decoration: underline;
-    }
-
+    .extras a { font-weight: 600; color: #00457c; text-decoration: none; }
+    .extras a:hover { text-decoration: underline; }
     footer {
-      background-color: #222;
-      color: #ccc;
-      text-align: center;
-      padding: 2rem 1rem;
-      margin-top: 3rem;
-      font-size: 0.9rem;
+      background-color: #222; color: #ccc; text-align: center;
+      padding: 2rem 1rem; margin-top: 3rem; font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
+  <!-- Header -->
   <header>
     <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
   </header>
 
-  <nav>
-    <div class="navbar">
-      <a href="/home" target="_top">Members Home</a>
-      <a href="/dues" target="_top">Dues</a>
-      <a href="/calendar" target="_top" class="current">Calendar</a>
-      <a href="/monthly-notices" target="_top">Notices</a>
-      <a href="/contact" target="_top">Contact Us</a>
-      <a href="/account" target="_top">Account</a>
-      <a href="#" onclick="doLogout()">Logout</a>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <button class="hamburger" id="hamburger">&#9776;</button>
+      <div class="nav-links" id="nav-links">
+        <a href="/home">Members Home</a>
+        <a href="/dues">Dues</a>
+        <a href="/calendar" class="current">Calendar</a>
+        <a href="/monthly-notices">Notices</a>
+        <a href="/contact">Contact Us</a>
+        <a href="/account">Account</a>
+        <a href="#" onclick="doLogout()">Logout</a>
+      </div>
     </div>
   </nav>
 
@@ -145,6 +120,11 @@
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
   <script>
+    // Navbar toggle
+    document.getElementById("hamburger").addEventListener("click", () => {
+      document.getElementById("nav-links").classList.toggle("show");
+    });
+
     const firebaseConfig = {
       apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
       authDomain: "shidle-lodge-members.firebaseapp.com",
@@ -165,7 +145,7 @@
       });
     }
 
-    // Restrict access unless user is signed in
+    // Restrict access unless signed in
     auth.onAuthStateChanged((user) => {
       if (!user) {
         window.location.href = "https://members.shidlelodge601.org/";
@@ -175,9 +155,7 @@
     });
 
     // Auto-logout after 30 min
-    setTimeout(() => {
-      doLogout();
-    }, 30 * 60 * 1000);
+    setTimeout(() => { doLogout(); }, 30 * 60 * 1000);
   </script>
 </body>
 </html>
