@@ -26,36 +26,43 @@
       width: 260px;
       height: auto;
     }
-    .auth-links {
-      position: absolute;
-      top: 1rem;
-      right: 2rem;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .auth-links a {
-      color: #00457c;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    .auth-links a:hover {
-      text-decoration: underline;
-    }
-    @media (max-width: 600px) {
-      .auth-links {
-        position: static;
-        justify-content: center;
-        margin-top: 10px;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-      }
-      header {
-        padding-bottom: 0;
-      }
-    }
+    <style>
+  .auth-links {
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .auth-links a {
+    color: #00457c;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .auth-links a:hover {
+    text-decoration: underline;
+  }
+
+@media (max-width: 600px) {
+  .auth-links {
+    position: static;
+    justify-content: center;
+    margin-top: 10px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* <-- adds a little breathing room between links */
+  }
+
+  header {
+    padding-bottom: 0;
+  }
+}
+
+
     nav {
       background-color: #00457c;
       padding: 10px 0;
@@ -136,30 +143,157 @@
 </head>
 <body>
 <header>
-  <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
-</header>
+    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+  </header>
 <nav>
   <div class="navbar">
     <a href="/home" target="_top" class="current">Members Home</a>
     <a href="/dues" target="_top">Dues</a>
     <a href="/calendar" target="_top">Calendar</a>
     <a href="/monthly-notices" target="_top">Notices</a>
-    <a href="/contact" target="_top">Contact Us</a>
     <a href="/account">Account</a>
-    <a href="#" onclick="firebase.auth().signOut().then(() => window.location.href='https://members.shidlelodge601.org/')">Logout</a>
+      <a href="#" onclick="firebase.auth().signOut().then(() => window.location.href='https://members.shidlelodge601.org/')">Logout</a>
   </div>
 </nav>
 
-<h1>Members Area</h1>
-<p align="center" id="greeting" style="font-size: 1.25rem; font-weight: 500; margin-top: -0.5rem;"></p>
+<style>
+  nav {
+    background-color: #00457c;
+    padding: 10px 0;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .navbar a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .navbar a:hover {
+    text-decoration: underline;
+  }
+  .navbar a.current {
+    text-decoration: underline;
+  }
+</style>
+<style>
+  nav {
+    background-color: #00457c;
+    padding: 10px 0;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .navbar a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .navbar a:hover {
+    text-decoration: underline;
+  }
+</style>
 
-<!-- Monthly Master's Message -->
-<div class="masters-message">
-  <h2>Master’s Message — <span id="message-month-year">Loading...</span></h2>
-  <div id="masters-message-content" style="margin-bottom: 20px;">Loading message...</div>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members Area - Shidle Lodge No. 601</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Raleway', sans-serif;
+      background-color: #e7dfd5;
+      color: #3e2723;
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    nav {
+      background-color: #00457c;
+      padding: 10px 0;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    h1 {
+      font-size: 40px;
+      color: #00457c;
+      text-align: center;
+      margin: 20px 0;
+      text-transform: uppercase;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .section h2 {
+      font-size: 22px;
+      color: #00457c;
+      border-left: 4px solid #00457c;
+      padding-left: 10px;
+      margin-bottom: 10px;
+    }
+    .notices-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .notices-list li {
+      margin-bottom: 10px;
+    }
+    .notices-list a {
+      color: #00457c;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .notices-list a:hover {
+      text-decoration: underline;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    iframe {
+      width: 100%;
+      border: none;
+      border-radius: 4px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+
+
+
+  <h1>Members Area</h1>
+  <p align="center" id="greeting" style="font-size: 1.25rem; font-weight: 500; margin-top: -0.5rem;"></p>
+
+
+<!-- Monthly Master's Message (Dynamic Archive) -->
+<div class="masters-message" style="background-color: #f0f4f8; border-left: 6px solid #00457c; padding: 20px; margin-bottom: 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+  <h2 style="color: #00457c; margin-top: 0;">Master’s Message — <span id="message-month-year">Loading...</span></h2>
+  <div id="masters-message-content" style="margin-bottom: 20px;">
+    Loading message...
+  </div>
   <div style="text-align: center;">
-    <button id="prev-btn">← Previous</button>
-    <button id="next-btn">Next →</button>
+    <button id="prev-btn" style="margin-right: 10px; padding: 8px 12px; border: none; background-color: #00457c; color: white; font-weight: bold; border-radius: 4px; cursor: pointer;">← Previous</button>
+    <button id="next-btn" style="margin-left: 10px; padding: 8px 12px; border: none; background-color: #00457c; color: white; font-weight: bold; border-radius: 4px; cursor: pointer;">Next →</button>
     <span id="latest-label" style="display:none; margin-left: 10px; font-style: italic; color: #555;">You're viewing the latest message</span>
   </div>
 </div>
@@ -167,23 +301,109 @@
 <script>
 // Month-to-message data
 const messages = {
-  "2025-01": { title: "January 2025", content: `...` },
-  "2025-02": { title: "February 2025", content: `...` },
-  "2025-03": { title: "March 2025", content: `...` },
-  "2025-04": { title: "April 2025", content: `...` },
-  "2025-05": { title: "May 2025", content: `...` },
-  "2025-06": { title: "June 2025", content: `...` },
-  "2025-09": {
-    title: "September 2025",
+  "2025-01": {
+    title: "January 2025",
     content: `
-      Brethren,
+      With the calendar year coming to a close, I want to take a moment to wish all of you and your families a healthy and peaceful holiday. May the Grand Architect of Heaven & Earth bless us & our families in the ensuing year.
       <br><br>
-      I hope this message finds you all well & enjoying the summer so far! ...
+      I also want to express my deep gratitude for entrusting me as the 131st Worshipful Master of Shidle Lodge #601. This responsibility is not taken on lightly and I look forward to developing and growing fellowship & camaraderie within the lodge.
+      <br><br>
+      My son is reaching the age of manhood among my people, and we will be honoring this at the Temple Mount in Jerusalem, a place so revered to our ancient & gentle craft. I hope to report on the experience upon my return.
+      <br><br>
+      I truly believe that Shidle Lodge is an exemplar of the best that Freemasonry has to offer. The only way to sustain this greatness is for all of us to volunteer to the best of our ability. Monday practices create an opportunity to develop stronger bonds and fellowship and to pass wisdom from the seasoned to the neophyte.
+      <br><br>
+      As we welcome 2025, I look forward to moving into the new year together, as we always have, as men of honor, duty, responsibility and, most of all, as brothers.
       <br><br>
       <em>Fraternally,<br><strong>Brother Avram R. Avishai</strong><br>Worshipful Master</em>
     `
-  }
+  },
+  "2025-02": {
+    title: "February 2025",
+    content: `
+      As I promised in my last message, I’d like to briefly report on my trip to Jerusalem... you cannot take more than a few steps in Israel without tripping over a piece of history, Biblical or Masonic, and it’s a pilgrimage that I’d encourage every mason to attempt.
+      <br><br>
+      Now on to lodge business. With the first stated and extra meetings of the year in the books, thank you to those who were able to attend. This lodge thrives on widespread participation, and I invite all of you to Monday night practice & fellowship.
+      <br><br>
+      My wife is looking for volunteers for her yet-to-be-named, “masonic-adjacent” ladies group. The goal is to help out the lodge while fostering camaraderie among the women in the lives of the good men meeting upstairs. Please contact me if your wife/SO would be interested in participating.
+      <br><br>
+      I’ll leave you with a sign I saw on the Temple Mount: “Turn off your phone, connect with God instead.”
+      <br><br>
+      <em>Fraternally,<br><strong>Brother Avram R. Avishai</strong><br>Worshipful Master</em>
+    `
+  },
+  "2025-03": {
+    title: "March 2025",
+    content: `
+      I hope this message finds you and your families doing well. It seems that winter has not finished having its fun with us as I see a fresh layer of snow and single digit temperatures are on the way.
+      <br><br>
+      I want to thank everyone who attended Rusty Masons night. If you didn’t attend, I shared a parable about two towns — one that valued detail and precision, and another that grew complacent. The former remained strong; the latter faded. The moral: it’s the small details that fortify everything that matters.
+      <br><br>
+      Rusty Masons night and extra meetings are essential. Your presence & support gives the next generation of masons the encouragement to prosper.
+      <br><br>
+      Also, if any of your lady friends or wives are interested in the Worshipful Mistress’s project — a masonic-adjacent ladies’ circle — please reach out to the secretary or myself.
+      <br><br>
+      <em>Fraternally,<br><strong>Brother Avram R. Avishai</strong><br>Worshipful Master</em>
+    `
+  },
+  "2025-04": {
+    title: "April 2025",
+    content: `
+      Spring is finally here, and as of this writing, it is about to start snowing again. Pothole season is ramping up — please take caution. I hope, with warmer weather, some of our brothers will come out of hibernation and support our candidates.
+      <br><br>
+      At our last meeting, I presented a paper on <strong>Blue: The Symbol of a Mason</strong>. Thank you to all who attended. If you’d like to share some little-known masonic wisdom, please reach out — let’s bring more light to the lodge.
+      <br><br>
+      This month’s stated meeting includes a DDGM visit and the conferral of 50 & 60 year pins. These are meaningful events — I hope to see you all there.
+      <br><br>
+      Finally, if you’ve not paid your dues, please do so or contact the secretary for help. Communication is key.
+      <br><br>
+      <em>Fraternally,<br><strong>Brother Avram R. Avishai</strong><br>Worshipful Master</em>
+    `
+  },
+  "2025-05": {
+    title: "May 2025",
+    content: `
+      A (hopefully) warm spring greeting to you all! Our lodge continues to grow in new membership. In April, we raised 2 candidates to the sublime degree of a Master Mason: Brothers Jacob S. Kell & Steven A. Cunning. We will also be conferring two more third degrees this coming month. Please welcome all these new members.
+      <br><br>
+      Our DDGM visit with Bro. James S. Roberts was a rousing success. I want to personally thank every brother whose tireless effort went into showing the district that Shidle Lodge has earned her stellar reputation. I also want to specifically thank our crew of masonic educators, as multiple masters & dignitaries throughout the district went out of their way to comment on how impressively well run our meeting was. Everyone that participated should feel proud of their involvement.
+      <br><br>
+      Congratulations to our 50 year brothers: William F. Hobaugh, Timothy F. Matovich (PM), Terry L. Casteel, Thomas H. Coles, & George M. Clarke Jr. Your contributions to the fraternity are deeply appreciated and have allowed us to continue our work today.
+      <br><br>
+      You are cordially invited to Shidle Lodge’s 2025 Past Master’s Dinner on Tuesday evening, May 6, 2025. Festivities will commence at 6:00 P.M. and will include catering from “The Lunch Lady on Wheels”. Please submit RSVPs directly to Brother John G. Payerchin or visit <a href="https://bit.ly/PMNdinner" target="_blank">https://bit.ly/PMNdinner</a> to register. Past Master’s night at the lodge is the one time in the year that we set aside to show our appreciation to all those brethren who have served as Worshipful Masters. I would personally like to thank those Past Masters who have been instrumental in the workings of this lodge during my tenure. I hope to see you all there!
+      <br><br>
+      <em>Fraternally,<br><strong>Brother Avram R. Avishai</strong><br>Worshipful Master</em>
+    `
+  },
+  "2025-06": {
+    title: "June 2025",
+    content: `
+      Brethren,
+      <br><br>
+      I hope this message finds you and your families doing well. Hopefully your HVAC systems are treating you well, as my A/C decided to die right at the beginning of the season. Luckily, the Grand Architect of the Universe, in His infinite mercy, saw fit to send us some cooler weather while its replacement is in transit.
+      <br><br>
+      I’d like to personally congratulate our newly raised Master Masons, Bro. Kevin L. Atkins & Bro. Stefan M. Wolowicz, as well as Bro. Bill Yorty, PM, for successfully conferring both degrees.
+      <br><br>
+      Our Past Masters Night on May 6 was a great success. It was truly a humbling experience to view the ceremony from the East. It is upon our Past Masters’ shoulders that the lodge stands, allowing us to reach the heights that we have and will further reach into the future. Thank you to the officers and volunteers for stepping up and making for a great evening.
+      <br><br>
+      Speaking of volunteers, we had a great turnout by the Masonic-adjacent women who volunteered for Past Masters Night as part of the Worshipful Mistress’s initiative. If there is a lady in your life who would enjoy spending time with a fun group of women while simultaneously helping out the lodge, please reach out to myself or the secretary to get more information.
+      <br><br>
+      <em>Fraternally,<br><strong>Brother Avram R. Avishai</strong><br>Worshipful Master</em>
+    `
+  },
+  "2025-09": {
+  title: "September 2025",
+  content: `
+    Brethren,
+    <br><br>
+    I hope this message finds you all well & enjoying the summer so far! The HVAC issues I alluded to in my last message have been thankfully alleviated & I got to enjoy the blessing of A/C with the rest of civilization. Having also done some outdoor work this summer, I’m looking forward to a break in the heat, but we are all too aware that we will be more than accommodated on that point soon enough.
+    <br><br>
+    I was unable to attend our last stated meeting due to the holiday of Shavu’oth, which commemorates the Israelites arriving at the foot of Mount Sinai 49 days after the Exodus from Egypt & receiving The Ten Commandments. The Ten Commandments, so revered among the household of the faithful, always fascinated me as they are the complete list of the capital offenses that make up the cornerstone of the ethics of western civilization, more especially the ethics of a Freemason. In times of confusion or difficulty, we should take solace in its simplicity for how to live a moral & Masonic life.
+    <br><br>
+    This coming meeting is our beloved Peaches & Ice Cream Night. Additionally, we will be honoring brethren that have served in the masonic fraternity for 25 years. I hope to see you all there as we kick-start the second half of the year.
+    <br><br>
+    <em>Fraternally,<br><strong>Brother Avram R. Avishai</strong><br>Worshipful Master</em>
+  `
 };
+
 
 const months = Object.keys(messages).sort();
 let currentIndex = months.length - 1;
@@ -193,55 +413,147 @@ function renderMessage(index) {
   document.getElementById("message-month-year").innerText = msg.title;
   document.getElementById("masters-message-content").innerHTML = msg.content;
 
-  document.getElementById("prev-btn").style.display = index === 0 ? "none" : "inline-block";
-  document.getElementById("next-btn").style.display = index === months.length - 1 ? "none" : "inline-block";
-  document.getElementById("latest-label").style.display = index === months.length - 1 ? "inline-block" : "none";
+  // Logic for buttons
+  const isFirst = index === 0;
+  const isLast = index === months.length - 1;
+
+  document.getElementById("prev-btn").style.display = isFirst ? "none" : "inline-block";
+  document.getElementById("next-btn").style.display = isLast ? "none" : "inline-block";
+  document.getElementById("latest-label").style.display = isLast ? "inline-block" : "none";
 }
 
 document.getElementById("prev-btn").addEventListener("click", () => {
-  if (currentIndex > 0) { currentIndex--; renderMessage(currentIndex); }
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderMessage(currentIndex);
+  }
 });
+
 document.getElementById("next-btn").addEventListener("click", () => {
-  if (currentIndex < months.length - 1) { currentIndex++; renderMessage(currentIndex); }
+  if (currentIndex < months.length - 1) {
+    currentIndex++;
+    renderMessage(currentIndex);
+  }
 });
 
 renderMessage(currentIndex);
 </script>
 
-<div class="container">
-  <div class="section">
-    <h2>Need a Ride to Lodge?</h2>
-    <p>If you are unable to drive ...</p>
-  </div>
-  <div class="section">
-    <h2>Need to Update Your Contact Info?</h2>
-    <p>If your address ...</p>
-  </div>
-  <div class="section">
-    <h2>External Masonic Resources</h2>
-    <ul class="notices-list">
-      <li><a href="https://portal.pamasons.org/users/sign_in" target="_blank">PA Grand Lodge Members Area</a></li>
-      <li><a href="https://masonicbloodandorgandonors.org" target="_blank">Masonic Blood & Organ Donation Program</a></li>
-      <li><a href="https://pagrandlodge.org/masonic-education/" target="_blank">Masonic Education</a></li>
-    </ul>
-  </div>
+
+  <div class="container">
+   <div class="section">
+  <h2>Need a Ride to Lodge?</h2>
+  <p>If you are unable to drive or need assistance getting to a meeting, please don't hesitate to reach out. We are happy to coordinate a ride with a Brother.</p>
+  <p><strong>Contact the Lodge Secretary:</strong><br>
+    Email: <a href="mailto:shidlelodge@gmail.com" style="color:#00457c; text-decoration:none;">shidlelodge@gmail.com</a><br>
+    Phone: <a href="tel:7246985098" style="color:#00457c; text-decoration:none;">724-698-5098</a>
+  </p>
 </div>
 
-<footer>
-  &copy; 2025 Shidle Lodge No. 601. All rights reserved.
-</footer>
+   <div class="section">
+  <h2>Need to Update Your Contact Info?</h2>
+  <p>If your address, phone number, or email has changed, please let us know so we can keep your records up to date and ensure you receive notices and communications.</p>
+  <p><strong>Contact the Lodge Secretary:</strong><br>
+    Email: <a href="mailto:shidlelodge@gmail.com" style="color:#00457c; text-decoration:none;">shidlelodge@gmail.com</a><br>
+    Phone: <a href="tel:724698509" style="color:#00457c; text-decoration:none;">724-698-5098</a>
+  </p>
+</div>
 
-<!-- Firebase -->
+
+    <!-- External Masonic Resources Section -->
+    <div class="section">
+      <h2>External Masonic Resources</h2>
+      <p>Explore these Masonic resources for further information:</p>
+      <ul class="notices-list">
+        <li><a href="https://portal.pamasons.org/users/sign_in" target="_blank">PA Grand Lodge Members Area</a></li>
+        <li><a href="https://masonicbloodandorgandonors.org" target="_blank">Masonic Blood & Organ Donation Program</a></li>
+        <li><a href="https://pagrandlodge.org/masonic-education/" target="_blank">Masonic Education</a></li>
+        <li><a href="https://masoniccharitiespa.org" target="_blank">Masonic Charities of PA</a></li>
+        <li><a href="https://masonicvillages.org/" target="_blank">Masonic Villages</a></li>
+
+      </ul>
+    </div>
+    </div>
+  </div>
+<footer>
+    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
+  </footer>
+
+  <!-- Firebase + Auto-Logout Script -->
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+      authDomain: "shidle-lodge-members.firebaseapp.com",
+      projectId: "shidle-lodge-members",
+      storageBucket: "shidle-lodge-members.appspot.com",
+      messagingSenderId: "293450171850",
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
+      measurementId: "G-2T6R765V2V"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Logout after 30 minutes of page load
+    setTimeout(() => {
+      auth.signOut().then(() => {
+        window.location.href = "https://members.shidlelodge601.org/";
+      });
+    }, 30 * 60 * 1000);
+  </script>
+ <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+
 <script>
-  const firebaseConfig = { /* your config */ };
+  firebase.auth().onAuthStateChanged(async user => {
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+    authDomain: "shidle-lodge-members.firebaseapp.com",
+    projectId: "shidle-lodge-members",
+    storageBucket: "shidle-lodge-members.appspot.com",
+    messagingSenderId: "293450171850",
+    appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
+    measurementId: "G-2T6R765V2V"
+  };
+
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  setTimeout(() => { auth.signOut().then(() => window.location.href = "/"); }, 30 * 60 * 1000);
+  // Auto logout after 30 minutes
+  setTimeout(() => {
+    auth.signOut().then(() => {
+      window.location.href = "https://members.shidlelodge601.org/";
+    });
+  }, 30 * 60 * 1000); // 30 minutes
+
+  // Greeting logic with Past Master check
+  auth.onAuthStateChanged(async user => {
+    if (user && user.displayName) {
+      const db = firebase.firestore();
+      try {
+        const doc = await db.collection("members").doc(user.uid).get();
+        const data = doc.exists ? doc.data() : {};
+        const pmSuffix = data.isPM ? ", PM" : "";
+        const docSnap = await db.collection("members").doc(user.uid).get();
+        const data = docSnap.exists ? docSnap.data() : {};
+        const pmSuffix = data.pastMaster === true ? ", PM" : "";
+        document.getElementById("greeting").textContent = `Welcome, Brother ${user.displayName}${pmSuffix}`;
+      } catch (error) {
+        console.error("Failed to load Past Master status:", error);
+        document.getElementById("greeting").textContent = `Welcome, Brother ${user.displayName}`;
+      }
+    }
+  });
 </script>
+
+
+
+
 </body>
 </html>
