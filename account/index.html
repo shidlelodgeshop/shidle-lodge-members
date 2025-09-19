@@ -99,20 +99,80 @@
   </header>
 
   <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <button class="hamburger" id="hamburger">&#9776;</button>
-      <div class="nav-links" id="nav-links">
-        <a href="/home">Members Home</a>
-        <a href="/dues">Dues</a>
-        <a href="/calendar">Calendar</a>
-        <a href="/monthly-notices">Notices</a>
-        <a href="/contact">Contact Us</a>
-        <a href="/account" class="current">Account</a>
-        <a href="#" onclick="doLogout()">Logout</a>
-      </div>
+<nav class="navbar">
+  <div class="nav-container">
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <div class="nav-links" id="nav-links">
+      <a href="/home">Members Home</a>
+      <a href="/dues">Dues</a>
+      <a href="/calendar">Calendar</a>
+      <a href="/monthly-notices">Notices</a>
+      <a href="/contact" class="current">Contact Us</a>
+      <a href="/account">Account</a>
+      <a href="#" onclick="doLogout()">Logout</a>
     </div>
-  </nav>
+  </div>
+</nav>
+
+<style>
+  nav.navbar {
+    background-color: #00457c;
+    padding: 0.5rem 1rem;
+  }
+  .nav-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center; /* ✅ center links on desktop */
+    align-items: center;
+    position: relative;
+  }
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+  }
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .nav-links a:hover,
+  .nav-links a.current {
+    text-decoration: underline;
+  }
+
+  /* Hamburger */
+  .hamburger {
+    display: none;
+    font-size: 28px;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    left: 1rem; /* ✅ stays left on mobile */
+  }
+
+  @media (max-width: 768px) {
+    .hamburger { display: block; }
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      background-color: #00457c;
+      padding: 1rem 0;
+    }
+    .nav-links a {
+      padding: 0.75rem;
+      display: block;
+      text-align: center;
+    }
+    .nav-links.show { display: flex; }
+    .nav-container { justify-content: flex-start; } /* ✅ let hamburger align left */
+  }
+</style>
+
 
   <div class="alert-box">
     <h2>If you need to update your Grand Lodge Information, please contact the <a href="mailto:shidlelodge@gmail.com?subject=Update%20Contact%20Information">Lodge Secretary</a></h2>
