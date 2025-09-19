@@ -1,99 +1,229 @@
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
-    authDomain: "shidle-lodge-members.firebaseapp.com",
-    projectId: "shidle-lodge-members",
-    storageBucket: "shidle-lodge-members.appspot.com",
-    messagingSenderId: "293450171850",
-    appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
-  };
-  firebase.initializeApp(firebaseConfig);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Shidle Lodge Members</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  let loginDenied = false;
-
-  const normalizeEmail = (e) => (e || "").trim().toLowerCase();
-
-  async function checkIfApproved(email) {
-    const id = normalizeEmail(email);
-    try {
-      const doc = await db.collection("greenlist").doc(id).get();
-      return doc.exists && doc.data()?.approved === true;
-    } catch (err) {
-      // If rules ever mis-configure, fail closed with a clear message
-      console.error("Greenlist check failed:", err);
-      throw new Error("Access check failed. Please try again or contact the Secretary.");
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f8f8;
+      color: #000;
+      line-height: 1.6;
     }
-  }
-
-  async function signInWithEmail() {
-    const rawEmail = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const message = document.getElementById("loginMessage");
-    message.textContent = "";
-
-    try {
-      const email = normalizeEmail(rawEmail);
-      // Sign in first
-      await auth.signInWithEmailAndPassword(email, password);
-
-      // Then check approval
-      const user = auth.currentUser;
-      if (!user) throw new Error("Not signed in.");
-      const approved = await checkIfApproved(user.email);
-
-      if (!approved) {
-        loginDenied = true;
-        await auth.signOut();
-        message.textContent = "Access denied. Contact the Lodge Secretary.";
-        return;
-      }
-      window.location.href = "/home";
-    } catch (error) {
-      document.getElementById("loginMessage").textContent = error.message;
+    header {
+      background-color: #eee0cb;
+      text-align: center;
+      padding: 2rem 1rem;
     }
-  }
-
-  async function signInWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const message = document.getElementById("loginMessage");
-    message.textContent = "";
-    try {
-      const result = await auth.signInWithPopup(provider);
-      const user = result.user;
-      if (!user) throw new Error("Google sign-in failed.");
-
-      const approved = await checkIfApproved(user.email);
-      if (!approved) {
-        loginDenied = true;
-        await auth.signOut();
-        message.textContent = "Access denied. Contact the Lodge Secretary.";
-        return;
-      }
-      window.location.href = "/home";
-    } catch (error) {
-      message.textContent = error.message;
+    header img {
+      width: 260px;
+      height: auto;
     }
-  }
+    .signup-container {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .signup-container h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border: 1px solid #000;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .text-link {
+      text-align: right;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    button,
+    .google-btn {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 4px;
+      background-color: #eee0cb;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 0.75rem;
+    }
+    button:hover,
+    .google-btn:hover {
+      background-color: #e0d2ba;
+    }
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .google-btn img {
+      width: 20px;
+      height: 20px;
+    }
+    .message {
+      text-align: center;
+      margin-top: 1rem;
+      color: red;
+      font-weight: bold;
+    }
+    footer {
+      background-color: #222;
+      color: #ccc;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://members.shidlelodge601.org">
+      <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+    </a>
+  </header>
 
-  auth.onAuthStateChanged(async (user) => {
-    if (user && !loginDenied) {
+  <div class="signup-container">
+    <h2>Account Sign In</h2>
+    <p style="text-align: center;">Sign in to access your member content.</p>
+
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+
+    <div class="text-link"><a href="reset.html">Forgot password?</a></div>
+
+    <button onclick="signInWithEmail()">Sign in</button>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo"> Continue with Google
+    </button>
+
+    <div class="message" id="loginMessage"></div>
+
+    <div class="text-link" style="text-align: center;">
+      New member? <a href="/signup">Sign Up Here</a>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
+  </footer>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+
+  <!-- App Logic -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+      authDomain: "shidle-lodge-members.firebaseapp.com",
+      projectId: "shidle-lodge-members",
+      storageBucket: "shidle-lodge-members.appspot.com",
+      messagingSenderId: "293450171850",
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    let loginDenied = false;
+
+    const normalizeEmail = (e) => (e || "").trim().toLowerCase();
+
+    async function checkIfApproved(email) {
+      const id = normalizeEmail(email);
       try {
+        const doc = await db.collection("greenlist").doc(id).get();
+        return doc.exists && doc.data()?.approved === true;
+      } catch (err) {
+        console.error("Greenlist check failed:", err);
+        throw new Error("Access check failed. Please try again or contact the Secretary.");
+      }
+    }
+
+    async function signInWithEmail() {
+      const rawEmail = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("loginMessage");
+      message.textContent = "";
+
+      try {
+        const email = normalizeEmail(rawEmail);
+        await auth.signInWithEmailAndPassword(email, password);
+
+        const user = auth.currentUser;
+        if (!user) throw new Error("Not signed in.");
         const approved = await checkIfApproved(user.email);
-        if (approved) {
-          window.location.href = "/home";
-        } else {
+
+        if (!approved) {
+          loginDenied = true;
+          await auth.signOut();
+          message.textContent = "Access denied. Contact the Lodge Secretary.";
+          return;
+        }
+        window.location.href = "/home";
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    }
+
+    async function signInWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const message = document.getElementById("loginMessage");
+      message.textContent = "";
+      try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        if (!user) throw new Error("Google sign-in failed.");
+
+        const approved = await checkIfApproved(user.email);
+        if (!approved) {
+          loginDenied = true;
+          await auth.signOut();
+          message.textContent = "Access denied. Contact the Lodge Secretary.";
+          return;
+        }
+        window.location.href = "/home";
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+      if (user && !loginDenied) {
+        try {
+          const approved = await checkIfApproved(user.email);
+          if (approved) {
+            window.location.href = "/home";
+          } else {
+            await auth.signOut();
+            document.getElementById("loginMessage").textContent =
+              "Access denied. Contact the Lodge Secretary.";
+          }
+        } catch (e) {
           await auth.signOut();
           document.getElementById("loginMessage").textContent =
-            "Access denied. Contact the Lodge Secretary.";
+            e.message || "Access check failed. Please try again or contact the Secretary.";
         }
-      } catch (e) {
-        await auth.signOut();
-        document.getElementById("loginMessage").textContent =
-          e.message || "Access check failed. Please try again or contact the Secretary.";
       }
-    }
-  });
-</script>
-
+    });
+  </script>
+</body>
+</html>
