@@ -19,67 +19,70 @@
     header {
       background-color: #eee0cb;
       padding: 1rem 2rem;
-      position: relative;
       text-align: center;
     }
     header img {
       width: 260px;
       height: auto;
     }
-    <style>
-  .auth-links {
-    position: absolute;
-    top: 1rem;
-    right: 2rem;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
 
-  .auth-links a {
-    color: #00457c;
-    font-weight: bold;
-    text-decoration: none;
-    font-size: 14px;
-  }
-
-  .auth-links a:hover {
-    text-decoration: underline;
-  }
-
-@media (max-width: 600px) {
-  .auth-links {
-    position: static;
-    justify-content: center;
-    margin-top: 10px;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px; /* <-- adds a little breathing room between links */
-  }
-
-  header {
-    padding-bottom: 0;
-  }
-}
-
-
-    nav {
+    /* Navbar */
+    nav.navbar {
       background-color: #00457c;
-      padding: 10px 0;
-      text-align: center;
-      margin-bottom: 20px;
+      padding: 0.5rem 1rem;
     }
-    .navbar a {
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+    }
+    .nav-links a {
       color: white;
-      margin: 0 15px;
       text-decoration: none;
       font-weight: 600;
       font-size: 16px;
     }
-    .navbar a:hover,
-    .navbar a.current {
+    .nav-links a:hover,
+    .nav-links a.current {
       text-decoration: underline;
     }
+    .hamburger {
+      display: none;
+      font-size: 28px;
+      color: white;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: block;
+      }
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: #00457c;
+        padding: 1rem 0;
+      }
+      .nav-links a {
+        padding: 0.75rem;
+        display: block;
+        text-align: center;
+      }
+      .nav-links.show {
+        display: flex;
+      }
+    }
+
     .container {
       max-width: 900px;
       margin: 2rem auto;
@@ -143,16 +146,21 @@
 </head>
 <body>
 <header>
-    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
-  </header>
-<nav>
-  <div class="navbar">
-    <a href="/home" target="_top" class="current">Members Home</a>
-    <a href="/dues" target="_top">Dues</a>
-    <a href="/calendar" target="_top">Calendar</a>
-    <a href="/monthly-notices" target="_top">Notices</a>
-    <a href="/account">Account</a>
+  <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+</header>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-container">
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <div class="nav-links" id="nav-links">
+      <a href="/home" class="current">Members Home</a>
+      <a href="/dues">Dues</a>
+      <a href="/calendar">Calendar</a>
+      <a href="/monthly-notices">Notices</a>
+      <a href="/account">Account</a>
       <a href="#" onclick="doLogout()">Logout</a>
+    </div>
   </div>
 </nav>
 
