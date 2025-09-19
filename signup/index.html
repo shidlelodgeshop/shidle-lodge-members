@@ -15,6 +15,8 @@
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+
+  <!-- Google reCAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
   <style>
@@ -49,8 +51,7 @@
     input[type="email"],
     input[type="password"],
     input[type="text"],
-    input[type="tel"],
-    input[type="date"] {
+    input[type="tel"] {
       width: 100%;
       padding: 0.75rem;
       margin-bottom: 1rem;
@@ -69,14 +70,7 @@
       cursor: pointer;
       color: #666;
     }
-    .radio-group {
-      margin-bottom: 1rem;
-    }
-    .radio-group label {
-      margin-right: 1rem;
-    }
-    button,
-    .google-btn {
+    button {
       width: 100%;
       padding: 0.5rem;
       font-size: 0.9rem;
@@ -88,8 +82,7 @@
       cursor: pointer;
       margin-bottom: 0.75rem;
     }
-    button:hover,
-    .google-btn:hover {
+    button:hover {
       background-color: #e0d2ba;
     }
     .message {
@@ -110,7 +103,9 @@
 </head>
 <body>
   <header>
-    <a href="https://members.shidlelodge601.org"><img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo"></a>
+    <a href="https://members.shidlelodge601.org">
+      <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
+    </a>
   </header>
 
   <div class="signup-container">
@@ -137,7 +132,11 @@
 
     <button id="signup">Sign Up</button>
 
-    <div class="g-recaptcha" data-sitekey="6LeWn5srAAAAAG9hzVZMKA2yGcZhyacrgf4stN-S" data-size="invisible" data-callback="onReCaptchaSuccess"></div>
+    <!-- Corrected reCAPTCHA site key -->
+    <div class="g-recaptcha"
+         data-sitekey="6LeVg5wrAAAAALonZpp4wO7-GI-tAp7_Bb3s8K-p"
+         data-size="invisible"
+         data-callback="onReCaptchaSuccess"></div>
 
     <div class="message" id="message"></div>
     <div class="link">
@@ -170,8 +169,7 @@
       projectId: "shidle-lodge-members",
       storageBucket: "shidle-lodge-members.appspot.com",
       messagingSenderId: "293450171850",
-      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33",
-      measurementId: "G-2T6R765V2V"
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -179,13 +177,16 @@
     const db = getFirestore(app);
     const message = document.getElementById("message");
 
+    // Helper: normalize emails
+    const normalizeEmail = (e) => (e || "").trim().toLowerCase();
+
     document.getElementById("signup").addEventListener("click", function (e) {
       e.preventDefault();
       grecaptcha.execute();
     });
 
     window.onReCaptchaSuccess = async function () {
-      const email = document.getElementById("email").value.trim();
+      const email = normalizeEmail(document.getElementById("email").value);
       const password = document.getElementById("password").value;
       const confirm = document.getElementById("confirm-password").value;
       const firstName = document.getElementById("firstName").value.trim();
@@ -201,6 +202,7 @@
       }
 
       try {
+        // check if on greenlist
         const greenRef = doc(db, "greenlist", email);
         const greenSnap = await getDoc(greenRef);
         if (!greenSnap.exists()) {
@@ -209,21 +211,21 @@
           return;
         }
 
+        // create account
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName });
 
-        const uid = userCredential.user.uid;
-        const status = "approved";
-
-        await setDoc(doc(db, "members", uid), {
+        // save profile under /members
+        await setDoc(doc(db, "members", userCredential.user.uid), {
           firstName,
           lastName,
           email,
           phone,
           pastMaster,
-          status
+          status: "approved"
         });
 
+        // send verification email
         await sendEmailVerification(userCredential.user, {
           url: 'https://members.shidlelodge601.org/verified.html'
         });
@@ -244,6 +246,7 @@
       }
     };
 
+    // toggle password visibility
     document.querySelectorAll(".toggle-password").forEach((el) => {
       el.addEventListener("click", () => {
         const input = document.querySelector(el.getAttribute("toggle"));
