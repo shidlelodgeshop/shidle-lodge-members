@@ -5,100 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Member Sign Up | Shidle Lodge No. 601</title>
 
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome for password toggle icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
 
-  <!-- Google reCAPTCHA -->
+  <!-- Invisible reCAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
   <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #f8f8f8;
-      color: #000;
-      line-height: 1.6;
+    body { margin:0; font-family:'Roboto',sans-serif; background:#f8f8f8; color:#000; line-height:1.6; }
+    header { background:#eee0cb; text-align:center; padding:2rem 1rem; }
+    header img { width:260px; height:auto; }
+    .signup-container { max-width:400px; margin:2rem auto; padding:2rem; background:#fff; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+    .signup-container h2 { text-align:center; margin-bottom:1rem; }
+    input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
+      width:100%; padding:0.75rem; margin-bottom:1rem; border:1px solid #000; border-radius:4px; font-size:1rem;
     }
-    header {
-      background-color: #eee0cb;
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-    header img {
-      width: 260px;
-      height: auto;
-    }
-    .signup-container {
-      max-width: 400px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    .signup-container h2 {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    input[type="email"],
-    input[type="password"],
-    input[type="text"],
-    input[type="tel"] {
-      width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      border: 1px solid #000;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-    .password-wrapper {
-      position: relative;
-    }
-    .toggle-password {
-      position: absolute;
-      top: 50%;
-      right: 1rem;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #666;
-    }
-    button {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 0.9rem;
-      border: none;
-      border-radius: 4px;
-      background-color: #eee0cb;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      margin-bottom: 0.75rem;
-    }
-    button:hover {
-      background-color: #e0d2ba;
-    }
-    .message {
-      text-align: center;
-      margin-top: 1rem;
-      color: red;
-      font-weight: bold;
-    }
-    footer {
-      background-color: #222;
-      color: #ccc;
-      text-align: center;
-      padding: 2rem 1rem;
-      margin-top: 3rem;
-      font-size: 0.9rem;
-    }
+    .password-wrapper { position:relative; }
+    .toggle-password { position:absolute; top:50%; right:1rem; transform:translateY(-50%); cursor:pointer; color:#666; }
+    button { width:100%; padding:0.5rem; font-size:0.9rem; border:none; border-radius:4px; background:#eee0cb; color:#000; font-weight:bold; cursor:pointer; margin-bottom:0.75rem; }
+    button:hover { background:#e0d2ba; }
+    .message { text-align:center; margin-top:1rem; color:red; font-weight:bold; }
+    footer { background:#222; color:#ccc; text-align:center; padding:2rem 1rem; margin-top:3rem; font-size:0.9rem; }
   </style>
 </head>
 <body>
@@ -110,6 +41,7 @@
 
   <div class="signup-container">
     <h2>Create Account</h2>
+
     <input type="text" id="firstName" placeholder="First Name" required />
     <input type="text" id="lastName" placeholder="Last Name" required />
     <input type="email" id="email" placeholder="Email" required />
@@ -125,43 +57,33 @@
       <span class="toggle-password" toggle="#confirm-password"><i class="fa fa-eye"></i></span>
     </div>
 
-    <div style="margin: 0.5rem 0; display: flex; align-items: center;">
-      <input type="checkbox" id="past-master" style="margin-right: 0.5rem;" />
-      <label for="past-master" style="font-size: 0.95rem;">I am a Past Master</label>
+    <div style="margin:0.5rem 0; display:flex; align-items:center;">
+      <input type="checkbox" id="past-master" style="margin-right:0.5rem;" />
+      <label for="past-master" style="font-size:0.95rem;">I am a Past Master</label>
     </div>
 
     <button id="signup">Sign Up</button>
 
-    <!-- Corrected reCAPTCHA site key -->
+    <!-- Invisible reCAPTCHA with your site key -->
     <div class="g-recaptcha"
          data-sitekey="6LeVg5wrAAAAALonZpp4wO7-GI-tAp7_Bb3s8K-p"
          data-size="invisible"
          data-callback="onReCaptchaSuccess"></div>
 
     <div class="message" id="message"></div>
-    <div class="link">
-      Already have an account? <a href="https://members.shidlelodge601.org/">Log In</a>
-    </div>
+    <div class="link">Already have an account? <a href="https://members.shidlelodge601.org/">Log In</a></div>
+
+    <p style="font-size:.85rem; color:#555; margin-top:1rem; text-align:center;">
+      Only pre-approved members can register. If your email isn’t on file, access will be denied.
+    </p>
   </div>
 
-  <footer>
-    &copy; 2025 Shidle Lodge No. 601. All rights reserved.
-  </footer>
+  <footer>&copy; 2025 Shidle Lodge No. 601. All rights reserved.</footer>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      sendEmailVerification,
-      updateProfile
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-    import {
-      getFirestore,
-      doc,
-      setDoc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
@@ -176,21 +98,20 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     const message = document.getElementById("message");
-
-    // Helper: normalize emails
     const normalizeEmail = (e) => (e || "").trim().toLowerCase();
 
-    document.getElementById("signup").addEventListener("click", function (e) {
+    document.getElementById("signup").addEventListener("click", (e) => {
       e.preventDefault();
       grecaptcha.execute();
     });
 
+    // reCAPTCHA callback
     window.onReCaptchaSuccess = async function () {
       const email = normalizeEmail(document.getElementById("email").value);
       const password = document.getElementById("password").value;
-      const confirm = document.getElementById("confirm-password").value;
+      const confirm  = document.getElementById("confirm-password").value;
       const firstName = document.getElementById("firstName").value.trim();
-      const lastName = document.getElementById("lastName").value.trim();
+      const lastName  = document.getElementById("lastName").value.trim();
       const displayName = `${firstName} ${lastName}`.trim();
       const phone = document.getElementById("phone").value.trim();
       const pastMaster = document.getElementById("past-master").checked;
@@ -202,7 +123,7 @@
       }
 
       try {
-        // check if on greenlist
+        // ✅ Check greenlist BEFORE creating account (now allowed by rules)
         const greenRef = doc(db, "greenlist", email);
         const greenSnap = await getDoc(greenRef);
         if (!greenSnap.exists()) {
@@ -211,48 +132,42 @@
           return;
         }
 
-        // create account
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await updateProfile(userCredential.user, { displayName });
+        // Create account
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(cred.user, { displayName });
 
-        // save profile under /members
-        await setDoc(doc(db, "members", userCredential.user.uid), {
-          firstName,
-          lastName,
-          email,
-          phone,
-          pastMaster,
-          status: "approved"
+        // Save profile in /members/{uid}
+        await setDoc(doc(db, "members", cred.user.uid), {
+          firstName, lastName, email, phone, pastMaster, status: "approved"
         });
 
-        // send verification email
-        await sendEmailVerification(userCredential.user, {
+        // Verification email
+        await sendEmailVerification(cred.user, {
           url: 'https://members.shidlelodge601.org/verified.html'
         });
 
         message.style.color = "green";
         message.innerHTML = "Signup successful! A verification email has been sent from <strong>noreply@shidlelodge601.org</strong>. Please check your inbox and spam folder.<br><br>Redirecting to login in 5 seconds...<br><br><a href='https://members.shidlelodge601.org'>Click here if not redirected.</a>";
 
-        setTimeout(() => {
-          window.location.href = "https://members.shidlelodge601.org";
-        }, 5000);
+        setTimeout(() => { window.location.href = "https://members.shidlelodge601.org"; }, 5000);
       } catch (error) {
+        console.error(error);
         message.style.color = "red";
-        if (error.code === 'auth/email-already-in-use') {
+        if (error.code === "auth/email-already-in-use") {
           message.innerHTML = `You're already registered. <a href='https://members.shidlelodge601.org' style='color:#800000; text-decoration:underline;'>Please sign in here</a>.`;
         } else {
-          message.textContent = "Signup error: " + error.message;
+          message.textContent = "Signup error: " + (error.message || "Unknown error");
         }
       }
     };
 
-    // toggle password visibility
+    // Show/hide passwords
     document.querySelectorAll(".toggle-password").forEach((el) => {
       el.addEventListener("click", () => {
         const input = document.querySelector(el.getAttribute("toggle"));
         const icon = el.querySelector("i");
-        const isPassword = input.getAttribute("type") === "password";
-        input.setAttribute("type", isPassword ? "text" : "password");
+        const isPw = input.getAttribute("type") === "password";
+        input.setAttribute("type", isPw ? "text" : "password");
         icon.classList.toggle("fa-eye");
         icon.classList.toggle("fa-eye-slash");
       });
