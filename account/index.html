@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Account Management | Shidle Lodge No. 601</title>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
   <style>
     body {
       margin: 0;
@@ -19,155 +18,77 @@
       text-align: center;
       padding: 1rem 0;
     }
-    header img {
-      width: 260px;
-      height: auto;
-    }
+    header img { width: 260px; height: auto; }
 
     /* Navbar */
-    nav.navbar {
-      background-color: #00457c;
-      padding: 0.5rem 1rem;
-    }
+    nav.navbar { background-color: #00457c; padding: 0.5rem 1rem; }
     .nav-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1100px;
-      margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1100px; margin: 0 auto;
     }
-    .nav-links {
-      display: flex;
-      gap: 1rem;
-    }
+    .nav-links { display: flex; gap: 1rem; }
     .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 16px;
+      color: white; text-decoration: none; font-weight: 600; font-size: 16px;
     }
-    .nav-links a:hover,
-    .nav-links a.current {
-      text-decoration: underline;
-    }
+    .nav-links a:hover, .nav-links a.current { text-decoration: underline; }
     .hamburger {
-      display: none;
-      font-size: 28px;
-      color: white;
-      background: none;
-      border: none;
-      cursor: pointer;
+      display: none; font-size: 28px; color: white; background: none; border: none; cursor: pointer;
     }
     @media (max-width: 768px) {
       .hamburger { display: block; }
       .nav-links {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background-color: #00457c;
-        padding: 1rem 0;
+        display: none; flex-direction: column; width: 100%;
+        background-color: #00457c; padding: 1rem 0;
       }
-      .nav-links a {
-        padding: 0.75rem;
-        display: block;
-        text-align: center;
-      }
+      .nav-links a { padding: 0.75rem; text-align: center; display: block; }
       .nav-links.show { display: flex; }
     }
 
     .container {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: white;
-      border-radius: 10px;
+      max-width: 900px; margin: 2rem auto; padding: 2rem;
+      background: white; border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
     .section { margin-bottom: 40px; }
     .section h2 {
-      font-size: 22px;
-      font-weight: 500;
-      color: #00457c;
-      border-left: 4px solid #00457c;
-      padding-left: 10px;
-      margin-bottom: 15px;
+      font-size: 22px; font-weight: 500; color: #00457c;
+      border-left: 4px solid #00457c; padding-left: 10px; margin-bottom: 15px;
     }
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 5px;
-      color: #333;
-    }
+    label { font-weight: 600; display: block; margin-bottom: 5px; color: #333; }
     input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 16px;
+      width: 100%; padding: 10px; margin-bottom: 10px;
+      border: 1px solid #ccc; border-radius: 5px; font-size: 16px;
     }
-    .checkbox-inline {
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-    }
+    .checkbox-inline { margin-bottom: 15px; display: flex; align-items: center; }
     .checkbox-inline input[type="checkbox"] { margin-right: 8px; }
     button {
-      background-color: #00457c;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
+      background-color: #00457c; color: white; padding: 10px 20px;
+      border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer;
     }
     button:hover { background-color: #003a66; }
     .alert {
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-size: 14px;
-      margin-bottom: 15px;
-      display: none;
+      padding: 10px 20px; border-radius: 5px; font-size: 14px;
+      margin-bottom: 15px; display: none;
     }
     .alert.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .alert.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     .strength-meter {
-      height: 8px;
-      background-color: #ccc;
-      border-radius: 5px;
-      margin-bottom: 8px;
+      height: 8px; background-color: #ccc; border-radius: 5px; margin-bottom: 8px;
     }
     .strength-weak { background-color: red; width: 33%; }
     .strength-medium { background-color: orange; width: 66%; }
     .strength-strong { background-color: green; width: 100%; }
     .strength-text { font-size: 14px; margin-bottom: 10px; }
     .alert-box {
-      background-color: #fff3f3;
-      border-left: 6px solid #c62828;
-      padding: 12px 20px;
-      margin: 20px 0;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      background-color: #fff3f3; border-left: 6px solid #c62828;
+      padding: 12px 20px; margin: 20px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
-    .alert-box h2 {
-      font-size: 22px;
-      font-weight: 500;
-      color: #c62828;
-      margin: 0;
-    }
-    .alert-box a {
-      color: #c62828;
-      text-decoration: underline;
-      font-weight: 600;
-    }
+    .alert-box h2 { font-size: 22px; font-weight: 500; color: #c62828; margin: 0; }
+    .alert-box a { color: #c62828; text-decoration: underline; font-weight: 600; }
     .alert-box a:hover { text-decoration: none; }
     footer {
-      background-color: #222;
-      color: #ccc;
-      text-align: center;
-      padding: 2rem 1rem;
-      margin-top: 3rem;
-      font-size: 0.9rem;
+      background-color: #222; color: #ccc; text-align: center;
+      padding: 2rem 1rem; margin-top: 3rem; font-size: 0.9rem;
     }
   </style>
 </head>
@@ -200,6 +121,7 @@
   <div class="container">
     <div id="global-message" class="alert"></div>
 
+    <!-- Contact Info -->
     <div class="section">
       <h2>Update Contact Information</h2>
       <form id="update-contact-form">
@@ -223,6 +145,7 @@
       </form>
     </div>
 
+    <!-- Password Change -->
     <div class="section">
       <h2>Change Password</h2>
       <form id="change-password-form">
@@ -290,7 +213,7 @@
       const uid = user.uid;
       const memberRef = db.collection("members").doc(uid);
 
-      // Load existing member data
+      // Load existing data
       memberRef.get().then(doc => {
         if (doc.exists) {
           const data = doc.data();
@@ -313,9 +236,7 @@
         const lastName = rest.join(" ");
 
         user.updateProfile({ displayName: name }).then(() => {
-          if (email !== user.email) {
-            return user.updateEmail(email);
-          }
+          if (email !== user.email) return user.updateEmail(email);
         }).then(() => {
           return memberRef.set({ firstName, lastName, email, pastMaster, phone }, { merge: true });
         }).then(() => {
@@ -395,4 +316,20 @@
     // Phone formatting
     function formatPhone(value) {
       const cleaned = value.replace(/\D/g, '').substring(0, 10);
-      const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d
+      const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
+      if (match) {
+        return !match[2]
+          ? match[1]
+          : `(${match[1]}) ${match[2]}${match[3] ? '-' + match[3] : ''}`;
+      }
+      return value;
+    }
+    document.getElementById('phone').addEventListener('input', e => {
+      e.target.value = formatPhone(e.target.value);
+    });
+
+    // Auto-logout after 30 min
+    setTimeout(() => { doLogout(); }, 30 * 60 * 1000);
+  </script>
+</body>
+</html>
