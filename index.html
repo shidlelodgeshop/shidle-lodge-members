@@ -141,58 +141,82 @@
     const db = firebase.firestore();
     let loginDenied = false;
 
+    // normalize emails to lowercase
+    const normalizeEmail = (e) => (e || "").trim().toLowerCase();
+
     async function checkIfApproved(email) {
-      const doc = await db.collection("greenlist").doc(email).get();
+      const id = normalizeEmail(email);
+      const doc = await db.collection("greenlist").doc(id).get();
       return doc.exists && doc.data().approved === true;
     }
 
     async function signInWithEmail() {
-      const email = document.getElementById("email").value;
+      const rawEmail = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const message = document.getElementById("loginMessage");
+      message.textContent = "";
 
       try {
-        const isApproved = await checkIfApproved(email);
-        if (!isApproved) {
+        const email = normalizeEmail(rawEmail);
+        // first: sign in
+        await auth.signInWithEmailAndPassword(email, password);
+
+        const user = auth.currentUser;
+        if (!user) throw new Error("Not signed in.");
+
+        // then: check approval
+        const approved = await checkIfApproved(user.email);
+        if (!approved) {
+          loginDenied = true;
+          await auth.signOut();
           message.textContent = "Access denied. Contact the Lodge Secretary.";
           return;
         }
-
-        await auth.signInWithEmailAndPassword(email, password);
         window.location.href = "/home";
       } catch (error) {
         message.textContent = error.message;
       }
     }
 
-    function signInWithGoogle() {
+    async function signInWithGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(async (result) => {
-          const email = result.user.email;
-          const isApproved = await checkIfApproved(email);
-          if (!isApproved) {
-            loginDenied = true;
-            alert("Access denied. Contact the Lodge Secretary.");
-            auth.signOut();
-          } else {
-            window.location.href = "/home";
-          }
-        })
-        .catch(error => {
-          document.getElementById("loginMessage").textContent = error.message;
-        });
+      const message = document.getElementById("loginMessage");
+      message.textContent = "";
+
+      try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        if (!user) throw new Error("Google sign-in failed.");
+
+        const approved = await checkIfApproved(user.email);
+        if (!approved) {
+          loginDenied = true;
+          await auth.signOut();
+          message.textContent = "Access denied. Contact the Lodge Secretary.";
+          return;
+        }
+        window.location.href = "/home";
+      } catch (error) {
+        message.textContent = error.message;
+      }
     }
 
+    // auto-redirect if already signed in & approved
     auth.onAuthStateChanged(async (user) => {
       if (user && !loginDenied) {
-        const email = user.email;
-        const isApproved = await checkIfApproved(email);
-        if (isApproved) {
-          window.location.href = "/home";
-        } else {
-          alert("Access denied. Contact the Lodge Secretary.");
-          auth.signOut();
+        try {
+          const approved = await checkIfApproved(user.email);
+          if (approved) {
+            window.location.href = "/home";
+          } else {
+            await auth.signOut();
+            document.getElementById("loginMessage").textContent =
+              "Access denied. Contact the Lodge Secretary.";
+          }
+        } catch (e) {
+          await auth.signOut();
+          document.getElementById("loginMessage").textContent =
+            "Access check failed. Please try again or contact the Secretary.";
         }
       }
     });
