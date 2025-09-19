@@ -28,41 +28,6 @@
       height: auto;
     }
 
-    .auth-links {
-      position: absolute;
-      top: 1rem;
-      right: 2rem;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .auth-links a {
-      color: #00457c;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .auth-links a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 600px) {
-      .auth-links {
-        position: static;
-        justify-content: center;
-        margin-top: 10px;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-      }
-
-      header {
-        padding-bottom: 0;
-      }
-    }
-
     nav {
       background-color: #00457c;
       padding: 10px 0;
@@ -135,17 +100,34 @@
       font-size: 0.9rem;
     }
   </style>
+
   <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
-    authDomain: "shidle-lodge-members.firebaseapp.com",
-    projectId: "shidle-lodge-members"
-  };
-  firebase.initializeApp(firebaseConfig);
-</script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+      authDomain: "shidle-lodge-members.firebaseapp.com",
+      projectId: "shidle-lodge-members"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+
+    function doLogout() {
+      auth.signOut().then(() => {
+        window.location.href = "https://members.shidlelodge601.org/";
+      }).catch(err => {
+        console.error("Logout error:", err);
+      });
+    }
+
+    // Auto logout after 30 minutes
+    setTimeout(() => {
+      doLogout();
+    }, 30 * 60 * 1000);
+  </script>
 
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
@@ -155,22 +137,20 @@
   </header>
 
   <nav>
-  <div class="navbar">
-    <a href="/home" target="_top" class="current">Members Home</a>
-    <a href="/dues" target="_top">Dues</a>
-    <a href="/calendar" target="_top">Calendar</a>
-    <a href="/monthly-notices" target="_top">Notices</a>
-    <a href="/contact" target="_top">Contact Us
-    <a href="/account">Account</a>
-      <a href="#" onclick="firebase.auth().signOut().then(() => window.location.href='https://members.shidlelodge601.org/')">Logout</a>
+    <div class="navbar">
+      <a href="/home" target="_top">Members Home</a>
+      <a href="/dues" target="_top">Dues</a>
+      <a href="/calendar" target="_top">Calendar</a>
+      <a href="/monthly-notices" target="_top">Notices</a>
+      <a href="/contact" target="_top" class="current">Contact Us</a>
+      <a href="/account" target="_top">Account</a>
+      <a href="#" onclick="doLogout()">Logout</a>
     </div>
   </nav>
-  </div>
-</nav>
 
   <main class="container">
     <h2>Contact the Lodge</h2>
-    <p style="text-align: left;">
+    <p>
       Use the form below to contact the Secretary. You may ask a general question, request assistance, or notify us of a brother in need.
     </p>
 
@@ -207,7 +187,8 @@
         Your Message:
         <textarea name="message" rows="6" required></textarea>
       </label>
-<div class="g-recaptcha" data-sitekey="6Led5Z0rAAAAAJJvN4TEz-BBEak8FSQzWAoYjVK5"></div>
+
+      <div class="g-recaptcha" data-sitekey="6Led5Z0rAAAAAJJvN4TEz-BBEak8FSQzWAoYjVK5"></div>
       <button type="submit">Send Message</button>
     </form>
 
@@ -220,47 +201,44 @@
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
 
-<script>
-  const form = document.getElementById("contact-form");
-  const thankYouMessage = document.getElementById("thank-you-message");
+  <script>
+    const form = document.getElementById("contact-form");
+    const thankYouMessage = document.getElementById("thank-you-message");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    const captchaResponse = grecaptcha.getResponse();
-    if (!captchaResponse) {
-      alert("Please complete the CAPTCHA.");
-      return;
-    }
-
-    const formData = new FormData(form);
-    formData.append("g-recaptcha-response", captchaResponse);
-
-    const action = "https://formspree.io/f/mwpqwbnn";
-
-    try {
-      const response = await fetch(action, {
-        method: "POST",
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        form.reset();
-        grecaptcha.reset();
-        form.style.display = "none";
-        thankYouMessage.style.display = "block";
-      } else {
-        alert("There was a problem submitting your form. Please try again.");
+      const captchaResponse = grecaptcha.getResponse();
+      if (!captchaResponse) {
+        alert("Please complete the CAPTCHA.");
+        return;
       }
-    } catch (error) {
-      alert("An error occurred. Please try again later.");
-    }
-  });
-</script>
 
+      const formData = new FormData(form);
+      formData.append("g-recaptcha-response", captchaResponse);
 
+      const action = "https://formspree.io/f/mwpqwbnn";
+
+      try {
+        const response = await fetch(action, {
+          method: "POST",
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          form.reset();
+          grecaptcha.reset();
+          form.style.display = "none";
+          thankYouMessage.style.display = "block";
+        } else {
+          alert("There was a problem submitting your form. Please try again.");
+        }
+      } catch (error) {
+        alert("An error occurred. Please try again later.");
+      }
+    });
+  </script>
 </body>
 </html>
+
