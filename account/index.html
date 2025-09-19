@@ -5,21 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Account Management | Shidle Lodge No. 601</title>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
-    authDomain: "shidle-lodge-members.firebaseapp.com",
-    projectId: "shidle-lodge-members"
-  };
-  firebase.initializeApp(firebaseConfig);
-</script>
 
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-  <script src="https://www.google.com/recaptcha/api.js?render=6LeVg5wrAAAAALonZpp4wO7-GI-tAp7_Bb3s8K-p"></script>
   <style>
     body {
       margin: 0;
@@ -73,31 +59,20 @@
       padding-left: 10px;
       margin-bottom: 15px;
     }
-.section h1 {
-  font-size: 22px;
-  font-weight: 500;
-  color: red; /* changed from #00457c */
-  border-left: 4px solid #00457c;
-  padding-left: 10px;
-  margin-bottom: 15px;
-  }
     label {
       font-weight: 600;
       display: block;
       margin-bottom: 5px;
       color: #333;
     }
-    input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="tel"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
+    input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
     .checkbox-inline {
       margin-bottom: 15px;
       display: flex;
@@ -142,22 +117,32 @@ input[type="tel"] {
       border-radius: 5px;
       margin-bottom: 8px;
     }
-    .strength-weak {
-      background-color: red;
-      width: 33%;
-    }
-    .strength-medium {
-      background-color: orange;
-      width: 66%;
-    }
-    .strength-strong {
-      background-color: green;
-      width: 100%;
-    }
+    .strength-weak { background-color: red; width: 33%; }
+    .strength-medium { background-color: orange; width: 66%; }
+    .strength-strong { background-color: green; width: 100%; }
     .strength-text {
       font-size: 14px;
       margin-bottom: 10px;
     }
+    .alert-box {
+      background-color: #fff3f3;
+      border-left: 6px solid #c62828;
+      padding: 12px 20px;
+      margin: 20px 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .alert-box h2 {
+      font-size: 22px;
+      font-weight: 500;
+      color: #c62828;
+      margin: 0;
+    }
+    .alert-box a {
+      color: #c62828;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+    .alert-box a:hover { text-decoration: none; }
     footer {
       background-color: #222;
       color: #ccc;
@@ -173,92 +158,46 @@ input[type="tel"] {
     <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
   </header>
   <nav>
-  <div class="navbar">
-    <a href="/home" target="_top" class="current">Members Home</a>
-    <a href="/dues" target="_top">Dues</a>
-    <a href="/calendar" target="_top">Calendar</a>
-    <a href="/monthly-notices" target="_top">Notices</a>
-    <a href="/contact" target="_top">Contact Us
-    <a href="/account">Account</a>
-      <a href="#" onclick="firebase.auth().signOut().then(() => window.location.href='https://members.shidlelodge601.org/')">Logout</a>
-  </div>
-</nav>
+    <div class="navbar">
+      <a href="/home" target="_top">Members Home</a>
+      <a href="/dues" target="_top">Dues</a>
+      <a href="/calendar" target="_top">Calendar</a>
+      <a href="/monthly-notices" target="_top">Notices</a>
+      <a href="/contact" target="_top">Contact Us</a>
+      <a href="/account" target="_top" class="current">Account</a>
+      <a href="#" onclick="doLogout()">Logout</a>
+    </div>
+  </nav>
+
   <div class="alert-box">
-  <h2>If you need to update your Grand Lodge Information, please contact the <a href="mailto:shidlelodge@gmail.com?subject=Update%20Contact%20Information">Lodge Secretary</a></h2>
-</div>
+    <h2>If you need to update your Grand Lodge Information, please contact the <a href="mailto:shidlelodge@gmail.com?subject=Update%20Contact%20Information">Lodge Secretary</a></h2>
+  </div>
 
-<style>
-  .alert-box {
-    background-color: #fff3f3;
-    border-left: 6px solid #c62828;
-    padding: 12px 20px;
-    margin: 20px 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  }
-
-  .alert-box h2 {
-    font-size: 22px;
-    font-weight: 500;
-    color: #c62828;
-    margin: 0;
-  }
-
-  .alert-box a {
-    color: #c62828;
-    text-decoration: underline;
-    font-weight: 600;
-  }
-
-  .alert-box a:hover {
-    text-decoration: none;
-  }
-</style>
   <div class="container">
     <div id="global-message" class="alert"></div>
     <div class="section">
       <h2>Update Contact Information</h2>
-     <form id="update-contact-form">
-  <label for="name">Full Name</label>
-  <input type="text" id="name" class="input-field" />
+      <form id="update-contact-form">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" />
 
-  <div class="checkbox-inline">
-    <input type="checkbox" id="past-master" name="past-master">
-    <label for="past-master">I am a Past Master</label>
-  </div>
+        <div class="checkbox-inline">
+          <input type="checkbox" id="past-master" name="past-master">
+          <label for="past-master">I am a Past Master</label>
+        </div>
 
-  <label for="email">Email Address</label>
-  <input type="email" id="email" class="input-field" />
+        <label for="email">Email Address</label>
+        <input type="email" id="email" />
 
-  <label for="phone">Phone Number</label>
-  <input type="tel" id="phone" class="input-field" />
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" />
 
-  <div style="margin-top: 15px;">
-    <button type="submit">Update Info</button>
-  </div>
-</form>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const phoneInput = document.getElementById("phone");
-
-    phoneInput.addEventListener("input", function (e) {
-      let value = phoneInput.value.replace(/\D/g, "").slice(0, 10); // Only digits, max 10
-      let formatted = "";
-
-      if (value.length > 0) {
-        formatted += value.slice(0, 3);
-      }
-      if (value.length >= 4) {
-        formatted += "-" + value.slice(3, 6);
-      }
-      if (value.length >= 7) {
-        formatted += "-" + value.slice(6, 10);
-      }
-
-      phoneInput.value = formatted;
-    });
-  });
-</script>
+        <div style="margin-top: 15px;">
+          <button type="submit">Update Info</button>
+        </div>
+      </form>
     </div>
+
     <div class="section">
       <h2>Change Password</h2>
       <form id="change-password-form">
@@ -277,191 +216,168 @@ input[type="tel"] {
       </form>
     </div>
   </div>
+
   <footer>
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
 
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
-    authDomain: "shidle-lodge-members.firebaseapp.com",
-    projectId: "shidle-lodge-members",
-    storageBucket: "shidle-lodge-members.appspot.com",
-    messagingSenderId: "293450171850",
-    appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
-  };
-  firebase.initializeApp(firebaseConfig);
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+      authDomain: "shidle-lodge-members.firebaseapp.com",
+      projectId: "shidle-lodge-members",
+      storageBucket: "shidle-lodge-members.appspot.com",
+      messagingSenderId: "293450171850",
+      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  const db = firebase.firestore();
-  const globalMessage = document.getElementById("global-message");
-
-  function showMessage(text, type = 'success') {
-    globalMessage.textContent = text;
-    globalMessage.className = `alert ${type}`;
-    globalMessage.style.display = 'block';
-    setTimeout(() => {
-      globalMessage.style.display = 'none';
-    }, 5000);
-  }
-
-  firebase.auth().onAuthStateChanged(user => {
-    if (!user) return window.location.href = "/";
-
-    const uid = user.uid;
-    const memberRef = db.collection("members").doc(uid);
-
-    // Load existing member data
-    memberRef.get().then(doc => {
-      if (doc.exists) {
-        const data = doc.data();
-        const fullName = `${data.firstName || ""} ${data.lastName || ""}`.trim();
-        document.getElementById("name").value = fullName;
-        document.getElementById("email").value = data.email || user.email || "";
-        document.getElementById("phone").value = data.phone || "";
-        document.getElementById("past-master").checked = data.pastMaster === true;
-      }
-    });
-
-    // Handle contact update
-    document.getElementById("update-contact-form").addEventListener("submit", e => {
-      e.preventDefault();
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const pastMaster = document.getElementById("past-master").checked;
-
-      const [firstName, ...rest] = name.split(" ");
-      const lastName = rest.join(" ");
-
-      user.updateProfile({ displayName: name }).then(() => {
-        if (email !== user.email) {
-          return user.updateEmail(email);
-        }
-      }).then(() => {
-        return memberRef.set({
-          firstName,
-          lastName,
-          email,
-          pastMaster,
-          phone
-}, { merge: true });
-      }).then(() => {
-        showMessage("Account updated successfully.");
-      }).catch(err => {
-        showMessage("Error: " + err.message, "error");
+    function doLogout() {
+      auth.signOut().then(() => {
+        window.location.href = "https://members.shidlelodge601.org/";
       });
-    });
+    }
 
-    // Handle password change
-    document.getElementById("change-password-form").addEventListener("submit", e => {
-      e.preventDefault();
-      const currentPassword = document.getElementById("current-password").value;
-      const newPassword = document.getElementById("new-password").value;
-      const confirmPassword = document.getElementById("confirm-password").value;
+    const globalMessage = document.getElementById("global-message");
+    function showMessage(text, type = 'success') {
+      globalMessage.textContent = text;
+      globalMessage.className = `alert ${type}`;
+      globalMessage.style.display = 'block';
+      setTimeout(() => { globalMessage.style.display = 'none'; }, 5000);
+    }
 
-      if (newPassword !== confirmPassword) {
-        showMessage("New passwords do not match.", "error");
-        return;
-      }
+    auth.onAuthStateChanged(user => {
+      if (!user) return window.location.href = "/";
+      const uid = user.uid;
+      const memberRef = db.collection("members").doc(uid);
 
-      const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+      // Load existing member data
+      memberRef.get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById("name").value = `${data.firstName || ""} ${data.lastName || ""}`.trim();
+          document.getElementById("email").value = data.email || user.email || "";
+          document.getElementById("phone").value = data.phone || "";
+          document.getElementById("past-master").checked = data.pastMaster === true;
+        }
+      });
 
-      user.reauthenticateWithCredential(credential).then(() => {
-        return user.updatePassword(newPassword);
-      }).then(() => {
-        showMessage("Password changed successfully.");
-      }).catch(err => {
-        if (err.code === "auth/wrong-password") {
-          showMessage("Current password is incorrect.", "error");
-        } else {
+      // Handle contact update
+      document.getElementById("update-contact-form").addEventListener("submit", e => {
+        e.preventDefault();
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const pastMaster = document.getElementById("past-master").checked;
+
+        const [firstName, ...rest] = name.split(" ");
+        const lastName = rest.join(" ");
+
+        user.updateProfile({ displayName: name }).then(() => {
+          if (email !== user.email) {
+            return user.updateEmail(email);
+          }
+        }).then(() => {
+          return memberRef.set({ firstName, lastName, email, pastMaster, phone }, { merge: true });
+        }).then(() => {
+          showMessage("Account updated successfully.");
+        }).catch(err => {
           showMessage("Error: " + err.message, "error");
+        });
+      });
+
+      // Handle password change
+      document.getElementById("change-password-form").addEventListener("submit", e => {
+        e.preventDefault();
+        const currentPassword = document.getElementById("current-password").value;
+        const newPassword = document.getElementById("new-password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
+
+        if (newPassword !== confirmPassword) {
+          showMessage("New passwords do not match.", "error");
+          return;
         }
+
+        const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+
+        user.reauthenticateWithCredential(credential).then(() => {
+          return user.updatePassword(newPassword);
+        }).then(() => {
+          showMessage("Password changed successfully.");
+        }).catch(err => {
+          if (err.code === "auth/wrong-password") {
+            showMessage("Current password is incorrect.", "error");
+          } else {
+            showMessage("Error: " + err.message, "error");
+          }
+        });
       });
     });
-  });
 
-  // Toggle show/hide passwords
-  document.getElementById("toggle-password").addEventListener("change", e => {
-    const type = e.target.checked ? "text" : "password";
-    document.getElementById("new-password").type = type;
-    document.getElementById("confirm-password").type = type;
-  });
-
-  // Password strength meter
-  document.getElementById("new-password").addEventListener("input", e => {
-    const val = e.target.value;
-    const bar = document.getElementById("strength-bar");
-    const text = document.getElementById("strength-text");
-    let score = 0;
-
-    if (val.length >= 6) score++;
-    if (/[A-Z]/.test(val)) score++;
-    if (/[0-9]/.test(val)) score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
-
-    bar.className = "strength-meter";
-    text.textContent = "";
-
-    if (val.length === 0) return;
-
-    if (score <= 1) {
-      bar.classList.add("strength-weak");
-      text.textContent = "Weak";
-      text.style.color = "red";
-    } else if (score <= 3) {
-      bar.classList.add("strength-medium");
-      text.textContent = "Medium";
-      text.style.color = "orange";
-    } else {
-      bar.classList.add("strength-strong");
-      text.textContent = "Strong";
-      text.style.color = "green";
-    }
-  });
-
-  // reCAPTCHA token injection
-  grecaptcha.ready(() => {
-    grecaptcha.execute('6LeVg5wrAAAAALonZpp4wO7-GI-tAp7_Bb3s8K-p', { action: 'account_update' }).then(token => {
-      ['update-contact-form', 'change-password-form'].forEach(id => {
-        const form = document.getElementById(id);
-        if (form && !form.querySelector('[name="recaptcha_token"]')) {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = "recaptcha_token";
-          input.value = token;
-          form.appendChild(input);
-        }
-      });
+    // Toggle show/hide passwords
+    document.getElementById("toggle-password").addEventListener("change", e => {
+      const type = e.target.checked ? "text" : "password";
+      document.getElementById("new-password").type = type;
+      document.getElementById("confirm-password").type = type;
     });
-  });
-</script>
-<script>
-  function formatPhone(value) {
-    const cleaned = value.replace(/\D/g, '').substring(0, 10);
-    const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
-    if (match) {
-      return !match[2]
-        ? match[1]
-        : `(${match[1]}) ${match[2]}${match[3] ? '-' + match[3] : ''}`;
+
+    // Password strength meter
+    document.getElementById("new-password").addEventListener("input", e => {
+      const val = e.target.value;
+      const bar = document.getElementById("strength-bar");
+      const text = document.getElementById("strength-text");
+      let score = 0;
+
+      if (val.length >= 6) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+
+      bar.className = "strength-meter";
+      text.textContent = "";
+
+      if (val.length === 0) return;
+
+      if (score <= 1) {
+        bar.classList.add("strength-weak");
+        text.textContent = "Weak";
+        text.style.color = "red";
+      } else if (score <= 3) {
+        bar.classList.add("strength-medium");
+        text.textContent = "Medium";
+        text.style.color = "orange";
+      } else {
+        bar.classList.add("strength-strong");
+        text.textContent = "Strong";
+        text.style.color = "green";
+      }
+    });
+
+    // Auto-format phone numbers
+    function formatPhone(value) {
+      const cleaned = value.replace(/\D/g, '').substring(0, 10);
+      const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
+      if (match) {
+        return !match[2]
+          ? match[1]
+          : `(${match[1]}) ${match[2]}${match[3] ? '-' + match[3] : ''}`;
+      }
+      return value;
     }
-    return value;
-  }
+    document.getElementById('phone').addEventListener('input', function (e) {
+      e.target.value = formatPhone(e.target.value);
+    });
 
-  // Auto-format existing value on page load
-  window.addEventListener('DOMContentLoaded', () => {
-    const phoneInput = document.getElementById('phone');
-    phoneInput.value = formatPhone(phoneInput.value);
-  });
-
-  // Format as you type
-  document.getElementById('phone').addEventListener('input', function (e) {
-    const input = e.target;
-    input.value = formatPhone(input.value);
-  });
-</script>
-
+    // Auto-logout after 30 min
+    setTimeout(() => { doLogout(); }, 30 * 60 * 1000);
+  </script>
 </body>
 </html>
