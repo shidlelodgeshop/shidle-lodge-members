@@ -124,106 +124,132 @@
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+    <!-- App Logic -->
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
 
-  <!-- App Logic -->
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
-      authDomain: "shidle-lodge-members.firebaseapp.com",
-      projectId: "shidle-lodge-members",
-      storageBucket: "shidle-lodge-members.appspot.com",
-      messagingSenderId: "293450171850",
-      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
-    };
-    firebase.initializeApp(firebaseConfig);
+<!-- App Logic -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+    authDomain: "shidle-lodge-members.firebaseapp.com",
+    projectId: "shidle-lodge-members",
+    storageBucket: "shidle-lodge-members.appspot.com",
+    messagingSenderId: "293450171850",
+    appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
+  };
+  firebase.initializeApp(firebaseConfig);
 
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    let loginDenied = false;
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  let loginDenied = false;
 
-    const normalizeEmail = (e) => (e || "").trim().toLowerCase();
+  const normalizeEmail = (e) => (e || "").trim().toLowerCase();
 
-    async function checkIfApproved(email) {
-      const id = normalizeEmail(email);
-      try {
-        const doc = await db.collection("greenlist").doc(id).get();
-        return doc.exists && doc.data()?.approved === true;
-      } catch (err) {
-        console.error("Greenlist check failed:", err);
-        throw new Error("Access check failed. Please try again or contact the Secretary.");
-      }
+  async function checkIfApproved(email) {
+    const id = normalizeEmail(email);
+    try {
+      const doc = await db.collection("greenlist").doc(id).get();
+      return doc.exists && doc.data()?.approved === true;
+    } catch (err) {
+      console.error("Greenlist check failed:", err);
+      throw new Error("Access check failed. Please try again or contact the Secretary.");
     }
+  }
 
-    async function signInWithEmail() {
-      const rawEmail = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const message = document.getElementById("loginMessage");
-      message.textContent = "";
+  async function signInWithEmail() {
+    const rawEmail = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("loginMessage");
+    message.textContent = "";
 
-      try {
-        const email = normalizeEmail(rawEmail);
-        await auth.signInWithEmailAndPassword(email, password);
+    try {
+      const email = normalizeEmail(rawEmail);
+      await auth.signInWithEmailAndPassword(email, password);
 
-        const user = auth.currentUser;
-        if (!user) throw new Error("Not signed in.");
-        const approved = await checkIfApproved(user.email);
+      const user = auth.currentUser;
+      if (!user) throw new Error("Not signed in.");
 
-        if (!approved) {
-          loginDenied = true;
-          await auth.signOut();
-          message.textContent = "Access denied. Contact the Lodge Secretary.";
-          return;
-        }
-        window.location.href = "/home";
-      } catch (error) {
-        message.textContent = error.message;
+      // ✅ Require verified email
+      if (!user.emailVerified) {
+        await auth.signOut();
+        message.textContent = "Please verify your email before logging in. Check your inbox.";
+        return;
       }
-    }
 
-    async function signInWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      const message = document.getElementById("loginMessage");
-      message.textContent = "";
-      try {
-        const result = await auth.signInWithPopup(provider);
-        const user = result.user;
-        if (!user) throw new Error("Google sign-in failed.");
-
-        const approved = await checkIfApproved(user.email);
-        if (!approved) {
-          loginDenied = true;
-          await auth.signOut();
-          message.textContent = "Access denied. Contact the Lodge Secretary.";
-          return;
-        }
-        window.location.href = "/home";
-      } catch (error) {
-        message.textContent = error.message;
+      const approved = await checkIfApproved(user.email);
+      if (!approved) {
+        loginDenied = true;
+        await auth.signOut();
+        message.textContent = "Access denied. Contact the Lodge Secretary.";
+        return;
       }
-    }
 
-    auth.onAuthStateChanged(async (user) => {
-      if (user && !loginDenied) {
-        try {
-          const approved = await checkIfApproved(user.email);
-          if (approved) {
-            window.location.href = "/home";
-          } else {
-            await auth.signOut();
-            document.getElementById("loginMessage").textContent =
-              "Access denied. Contact the Lodge Secretary.";
-          }
-        } catch (e) {
+      window.location.href = "/home";
+    } catch (error) {
+      message.textContent = error.message;
+    }
+  }
+
+  async function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const message = document.getElementById("loginMessage");
+    message.textContent = "";
+    try {
+      const result = await auth.signInWithPopup(provider);
+      const user = result.user;
+      if (!user) throw new Error("Google sign-in failed.");
+
+      // ✅ Require verified email (Google accounts are usually verified, but check anyway)
+      if (!user.emailVerified) {
+        await auth.signOut();
+        message.textContent = "Your Google account email must be verified first.";
+        return;
+      }
+
+      const approved = await checkIfApproved(user.email);
+      if (!approved) {
+        loginDenied = true;
+        await auth.signOut();
+        message.textContent = "Access denied. Contact the Lodge Secretary.";
+        return;
+      }
+
+      window.location.href = "/home";
+    } catch (error) {
+      message.textContent = error.message;
+    }
+  }
+
+  auth.onAuthStateChanged(async (user) => {
+    if (user && !loginDenied) {
+      try {
+        // ✅ Require verified email
+        if (!user.emailVerified) {
           await auth.signOut();
           document.getElementById("loginMessage").textContent =
-            e.message || "Access check failed. Please try again or contact the Secretary.";
+            "Please verify your email before logging in. Check your inbox.";
+          return;
         }
+
+        const approved = await checkIfApproved(user.email);
+        if (approved) {
+          window.location.href = "/home";
+        } else {
+          await auth.signOut();
+          document.getElementById("loginMessage").textContent =
+            "Access denied. Contact the Lodge Secretary.";
+        }
+      } catch (e) {
+        await auth.signOut();
+        document.getElementById("loginMessage").textContent =
+          e.message || "Access check failed. Please try again or contact the Secretary.";
       }
-    });
-  </script>
+    }
+  });
+</script>
+
 </body>
 </html>
