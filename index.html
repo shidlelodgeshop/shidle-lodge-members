@@ -228,7 +228,7 @@
           if (!user.emailVerified) {
             await auth.signOut();
             document.getElementById("loginMessage").textContent =
-              "Please verify your email before logging in. Check your inbox.";
+              "Please verify your email before logging in. Check your inbox or spam folders.";
             return;
           }
 
