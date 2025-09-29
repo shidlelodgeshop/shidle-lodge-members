@@ -6,11 +6,9 @@
   <title>Members Lodge Calendar | Shidle Lodge No. 601</title>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
+ <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      display: none; /* Hide until login verified */
       margin: 0;
       font-family: 'Roboto', sans-serif;
       background-color: #f8f8f8;
@@ -27,74 +25,72 @@
     /* Navbar */
     nav.navbar { background-color: #00457c; padding: 0.5rem 1rem; }
     .nav-container {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;  /* ✅ Center links on desktop */
-      align-items: center;
-      position: relative;
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1100px; margin: 0 auto;
     }
     .nav-links { display: flex; gap: 1rem; }
     .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 16px;
+      color: white; text-decoration: none; font-weight: 600; font-size: 16px;
     }
-    .nav-links a:hover,
-    .nav-links a.current { text-decoration: underline; }
-
+    .nav-links a:hover, .nav-links a.current { text-decoration: underline; }
     .hamburger {
-      display: none;
-      font-size: 28px;
-      color: white;
-      background: none;
-      border: none;
-      cursor: pointer;
-      position: absolute;
-      left: 1rem; /* Keep hamburger on left for mobile */
+      display: none; font-size: 28px; color: white; background: none; border: none; cursor: pointer;
     }
     @media (max-width: 768px) {
       .hamburger { display: block; }
       .nav-links {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background-color: #00457c;
-        padding: 1rem 0;
+        display: none; flex-direction: column; width: 100%;
+        background-color: #00457c; padding: 1rem 0;
       }
-      .nav-links a {
-        padding: 0.75rem;
-        text-align: center;
-        display: block;
-      }
+      .nav-links a { padding: 0.75rem; text-align: center; display: block; }
       .nav-links.show { display: flex; }
-      .nav-container { justify-content: flex-start; }
     }
 
-    h1 {
-      font-size: 32px;
-      color: #00457c;
-      text-align: center;
-      margin: 20px 0;
+    .container {
+      max-width: 900px; margin: 2rem auto; padding: 2rem;
+      background: white; border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-    iframe.calendar-frame {
-      width: 100%;
-      min-height: 800px;
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    .section { margin-bottom: 40px; }
+    .section h2 {
+      font-size: 22px; font-weight: 500; color: #00457c;
+      border-left: 4px solid #00457c; padding-left: 10px; margin-bottom: 15px;
     }
-    @media (max-width: 768px) {
-      iframe.calendar-frame { min-height: 1000px; }
+    label { font-weight: 600; display: block; margin-bottom: 5px; color: #333; }
+    input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
+      width: 100%; padding: 10px; margin-bottom: 10px;
+      border: 1px solid #ccc; border-radius: 5px; font-size: 16px;
     }
+    .checkbox-inline { margin-bottom: 15px; display: flex; align-items: center; }
+    .checkbox-inline input[type="checkbox"] { margin-right: 8px; }
+    button {
+      background-color: #00457c; color: white; padding: 10px 20px;
+      border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer;
+    }
+    button:hover { background-color: #003a66; }
+    .alert {
+      padding: 10px 20px; border-radius: 5px; font-size: 14px;
+      margin-bottom: 15px; display: none;
+    }
+    .alert.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .strength-meter {
+      height: 8px; background-color: #ccc; border-radius: 5px; margin-bottom: 8px;
+    }
+    .strength-weak { background-color: red; width: 33%; }
+    .strength-medium { background-color: orange; width: 66%; }
+    .strength-strong { background-color: green; width: 100%; }
+    .strength-text { font-size: 14px; margin-bottom: 10px; }
+    .alert-box {
+      background-color: #fff3f3; border-left: 6px solid #c62828;
+      padding: 12px 20px; margin: 20px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .alert-box h2 { font-size: 22px; font-weight: 500; color: #c62828; margin: 0; }
+    .alert-box a { color: #c62828; text-decoration: underline; font-weight: 600; }
+    .alert-box a:hover { text-decoration: none; }
     footer {
-      background-color: #222;
-      color: #ccc;
-      text-align: center;
-      padding: 2rem 1rem;
-      margin-top: 3rem;
-      font-size: 0.9rem;
+      background-color: #222; color: #ccc; text-align: center;
+      padding: 2rem 1rem; margin-top: 3rem; font-size: 0.9rem;
     }
   </style>
 </head>
@@ -105,21 +101,161 @@
   </header>
 
   <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <button class="hamburger" id="hamburger">&#9776;</button>
-      <div class="nav-links" id="nav-links">
-        <a href="/home">Members Home</a>
-        <a href="/dues">Dues</a>
-        <a href="/calendar" class="current">Calendar</a>
-        <a href="/monthly-notices">Notices</a>
-        <a href="/contact">Contact Us</a>
-        <a href="/account">Account</a>
-        <a href="#" onclick="doLogout()">Logout</a>
-      </div>
+<nav class="navbar">
+  <div class="nav-container">
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <div class="nav-links" id="nav-links">
+      <a href="/home">Members Home</a>
+      <a href="/dues">Dues</a>
+      <a href="/calendar">Calendar</a>
+      <a href="/monthly-notices">Notices</a>
+      <a href="/contact" class="current">Contact Us</a>
+      <a href="/account">Account</a>
+      <a href="#" onclick="doLogout()">Logout</a>
     </div>
-  </nav>
+  </div>
+</nav>
 
+<style>
+  nav.navbar {
+    background-color: #00457c;
+    padding: 0.5rem 1rem;
+  }
+  .nav-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center; /* ✅ center links on desktop */
+    align-items: center;
+    position: relative;
+  }
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+  }
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .nav-links a:hover,
+  .nav-links a.current {
+    text-decoration: underline;
+  }
+
+  /* Hamburger */
+  .hamburger {
+    display: none;
+    font-size: 28px;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    left: 1rem; /* ✅ stays left on mobile */
+  }
+
+  @media (max-width: 768px) {
+    .hamburger { display: block; }
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      background-color: #00457c;
+      padding: 1rem 0;
+    }
+    .nav-links a {
+      padding: 0.75rem;
+      display: block;
+      text-align: center;
+    }
+    .nav-links.show { display: flex; }
+    .nav-container { justify-content: flex-start; } /* ✅ let hamburger align left */
+  }
+</style>
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members Area - Shidle Lodge No. 601</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Raleway', sans-serif;
+      background-color: #e7dfd5;
+      color: #3e2723;
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    nav {
+      background-color: #00457c;
+      padding: 10px 0;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    h1 {
+      font-size: 40px;
+      color: #00457c;
+      text-align: center;
+      margin: 20px 0;
+      text-transform: uppercase;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .section h2 {
+      font-size: 22px;
+      color: #00457c;
+      border-left: 4px solid #00457c;
+      padding-left: 10px;
+      margin-bottom: 10px;
+    }
+    .notices-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .notices-list li {
+      margin-bottom: 10px;
+    }
+    .notices-list a {
+      color: #00457c;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .notices-list a:hover {
+      text-decoration: underline;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    iframe {
+      width: 100%;
+      border: none;
+      border-radius: 4px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
   <h1>Members Lodge Calendar</h1>
   <p style="text-align:center;">
     <a href="https://calendar.google.com/calendar/render?cid=796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com" target="_blank">
