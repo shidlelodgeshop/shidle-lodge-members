@@ -545,6 +545,20 @@ renderMessage(currentIndex);
     document.getElementById("nav-links").classList.toggle("show");
   });
 </script>
+<script>
+  // --- Protect page access ---
+  document.body.style.display = "none"; // hide until auth check finishes
+
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      // not logged in → send to login page
+      window.location.replace("https://members.shidlelodge601.org/");
+    } else {
+      // logged in → reveal page
+      document.body.style.display = "block";
+    }
+  });
+</script>
 
 
 
