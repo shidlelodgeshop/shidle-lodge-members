@@ -457,6 +457,17 @@
     });
   }, 30 * 60 * 1000);
 </script>
+<script>
+  // --- Mobile Navbar Toggle ---
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("nav-links");
+
+  if (hamburger && navLinks) {
+    hamburger.addEventListener("click", () => {
+      navLinks.classList.toggle("show");
+    });
+  }
+</script>
 
 </body>
 </html>
