@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    /* Global styles */
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
@@ -30,74 +29,31 @@
       height: auto;
     }
 
-    /* Navbar */
-    nav.navbar {
-      background-color: #00457c;
-      padding: 0.5rem 1rem;
-    }
-
+    /* Navbar (identical to Dues page) */
+    nav.navbar { background-color: #00457c; padding: 0.5rem 1rem; }
     .nav-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      max-width: 1100px;
-      margin: 0 auto;
-      position: relative;
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1100px; margin: 0 auto;
     }
-
-    .nav-links {
-      display: flex;
-      gap: 1rem;
-    }
-
+    .nav-links { display: flex; gap: 1rem; }
     .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 16px;
+      color: white; text-decoration: none; font-weight: 600; font-size: 16px;
     }
-
-    .nav-links a:hover,
-    .nav-links a.current {
-      text-decoration: underline;
-    }
-
+    .nav-links a:hover, .nav-links a.current { text-decoration: underline; }
     .hamburger {
-      display: none;
-      font-size: 28px;
-      color: white;
-      background: none;
-      border: none;
-      cursor: pointer;
-      position: absolute;
-      left: 1rem;
+      display: none; font-size: 28px; color: white; background: none; border: none; cursor: pointer;
     }
-
     @media (max-width: 768px) {
-      .hamburger {
-        display: block;
-      }
+      .hamburger { display: block; }
       .nav-links {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background-color: #00457c;
-        padding: 1rem 0;
+        display: none; flex-direction: column; width: 100%;
+        background-color: #00457c; padding: 1rem 0;
       }
-      .nav-links.show {
-        display: flex;
-      }
-      .nav-links a {
-        padding: 0.75rem;
-        text-align: center;
-        display: block;
-      }
-      .nav-container {
-        justify-content: flex-start;
-      }
+      .nav-links a { padding: 0.75rem; text-align: center; display: block; }
+      .nav-links.show { display: flex; }
     }
 
-    /* Content container */
+    /* Page container */
     .container {
       max-width: 900px;
       margin: 2rem auto;
