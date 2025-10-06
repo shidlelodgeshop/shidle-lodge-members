@@ -422,45 +422,41 @@
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
   </footer>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-  <script>
-    // Navbar toggle
-    document.getElementById("hamburger").addEventListener("click", () => {
-      document.getElementById("nav-links").classList.toggle("show");
-    });
+ <!-- Firebase Auth Protection (universal gate) -->
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+<script>
+  // --- Firebase App Config ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
+    authDomain: "shidle-lodge-members.firebaseapp.com",
+    projectId: "shidle-lodge-members",
+    storageBucket: "shidle-lodge-members.appspot.com",
+    messagingSenderId: "293450171850",
+    appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
-      authDomain: "shidle-lodge-members.firebaseapp.com",
-      projectId: "shidle-lodge-members",
-      storageBucket: "shidle-lodge-members.appspot.com",
-      messagingSenderId: "293450171850",
-      appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
-    };
-
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    function doLogout() {
-      auth.signOut().then(() => {
-        window.location.href = "https://members.shidlelodge601.org/";
-      });
+  // --- Require login before showing page ---
+  document.body.style.display = "none"; // Hide everything until check finishes
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      // Redirect if not logged in
+      window.location.replace("https://members.shidlelodge601.org/");
+    } else {
+      // Reveal the page
+      document.body.style.display = "block";
     }
+  });
 
-    // Require login before showing content
-    auth.onAuthStateChanged((user) => {
-      if (!user) {
-        window.location.href = "https://members.shidlelodge601.org/";
-      } else {
-        document.body.style.display = "block";
-      }
+  // --- Optional: Auto logout after 30 minutes ---
+  setTimeout(() => {
+    auth.signOut().then(() => {
+      window.location.href = "https://members.shidlelodge601.org/";
     });
+  }, 30 * 60 * 1000);
+</script>
 
-    // Auto-logout after 30 minutes
-    setTimeout(() => { doLogout(); }, 30 * 60 * 1000);
-  </script>
 </body>
 </html>
