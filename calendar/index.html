@@ -6,273 +6,197 @@
   <title>Members Lodge Calendar | Shidle Lodge No. 601</title>
 
   <!-- Google Fonts -->
- <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
+    /* Global styles */
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
       background-color: #f8f8f8;
       color: #000;
       line-height: 1.6;
+      display: none; /* Hidden until Firebase confirms user */
     }
+
     header {
       background-color: #eee0cb;
       text-align: center;
       padding: 1rem 0;
     }
-    header img { width: 260px; height: auto; }
+
+    header img {
+      width: 260px;
+      height: auto;
+    }
 
     /* Navbar */
-    nav.navbar { background-color: #00457c; padding: 0.5rem 1rem; }
+    nav.navbar {
+      background-color: #00457c;
+      padding: 0.5rem 1rem;
+    }
+
     .nav-container {
-      display: flex; justify-content: space-between; align-items: center;
-      max-width: 1100px; margin: 0 auto;
-    }
-    .nav-links { display: flex; gap: 1rem; }
-    .nav-links a {
-      color: white; text-decoration: none; font-weight: 600; font-size: 16px;
-    }
-    .nav-links a:hover, .nav-links a.current { text-decoration: underline; }
-    .hamburger {
-      display: none; font-size: 28px; color: white; background: none; border: none; cursor: pointer;
-    }
-    @media (max-width: 768px) {
-      .hamburger { display: block; }
-      .nav-links {
-        display: none; flex-direction: column; width: 100%;
-        background-color: #00457c; padding: 1rem 0;
-      }
-      .nav-links a { padding: 0.75rem; text-align: center; display: block; }
-      .nav-links.show { display: flex; }
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
     }
 
-    .container {
-      max-width: 900px; margin: 2rem auto; padding: 2rem;
-      background: white; border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    .section { margin-bottom: 40px; }
-    .section h2 {
-      font-size: 22px; font-weight: 500; color: #00457c;
-      border-left: 4px solid #00457c; padding-left: 10px; margin-bottom: 15px;
-    }
-    label { font-weight: 600; display: block; margin-bottom: 5px; color: #333; }
-    input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
-      width: 100%; padding: 10px; margin-bottom: 10px;
-      border: 1px solid #ccc; border-radius: 5px; font-size: 16px;
-    }
-    .checkbox-inline { margin-bottom: 15px; display: flex; align-items: center; }
-    .checkbox-inline input[type="checkbox"] { margin-right: 8px; }
-    button {
-      background-color: #00457c; color: white; padding: 10px 20px;
-      border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer;
-    }
-    button:hover { background-color: #003a66; }
-    .alert {
-      padding: 10px 20px; border-radius: 5px; font-size: 14px;
-      margin-bottom: 15px; display: none;
-    }
-    .alert.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .alert.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .strength-meter {
-      height: 8px; background-color: #ccc; border-radius: 5px; margin-bottom: 8px;
-    }
-    .strength-weak { background-color: red; width: 33%; }
-    .strength-medium { background-color: orange; width: 66%; }
-    .strength-strong { background-color: green; width: 100%; }
-    .strength-text { font-size: 14px; margin-bottom: 10px; }
-    .alert-box {
-      background-color: #fff3f3; border-left: 6px solid #c62828;
-      padding: 12px 20px; margin: 20px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    }
-    .alert-box h2 { font-size: 22px; font-weight: 500; color: #c62828; margin: 0; }
-    .alert-box a { color: #c62828; text-decoration: underline; font-weight: 600; }
-    .alert-box a:hover { text-decoration: none; }
-    footer {
-      background-color: #222; color: #ccc; text-align: center;
-      padding: 2rem 1rem; margin-top: 3rem; font-size: 0.9rem;
-    }
-  </style>
-</head>
-<body>
-  <!-- Header -->
-  <header>
-    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95" alt="Shidle Lodge Logo">
-  </header>
-
-  <!-- Navbar -->
-<nav class="navbar">
-  <div class="nav-container">
-    <button class="hamburger" id="hamburger">&#9776;</button>
-    <div class="nav-links" id="nav-links">
-      <a href="/home">Members Home</a>
-      <a href="/dues">Dues</a>
-      <a href="/calendar">Calendar</a>
-      <a href="/monthly-notices">Notices</a>
-      <a href="/contact" class="current">Contact Us</a>
-      <a href="/account">Account</a>
-      <a href="#" onclick="doLogout()">Logout</a>
-    </div>
-  </div>
-</nav>
-
-<style>
-  nav.navbar {
-    background-color: #00457c;
-    padding: 0.5rem 1rem;
-  }
-  .nav-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center; /* ✅ center links on desktop */
-    align-items: center;
-    position: relative;
-  }
-  .nav-links {
-    display: flex;
-    gap: 1rem;
-  }
-  .nav-links a {
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 16px;
-  }
-  .nav-links a:hover,
-  .nav-links a.current {
-    text-decoration: underline;
-  }
-
-  /* Hamburger */
-  .hamburger {
-    display: none;
-    font-size: 28px;
-    color: white;
-    background: none;
-    border: none;
-    cursor: pointer;
-    position: absolute;
-    left: 1rem; /* ✅ stays left on mobile */
-  }
-
-  @media (max-width: 768px) {
-    .hamburger { display: block; }
     .nav-links {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      background-color: #00457c;
-      padding: 1rem 0;
+      display: flex;
+      gap: 1rem;
     }
+
     .nav-links a {
-      padding: 0.75rem;
-      display: block;
-      text-align: center;
-    }
-    .nav-links.show { display: flex; }
-    .nav-container { justify-content: flex-start; } /* ✅ let hamburger align left */
-  }
-</style>
-
-
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Members Area - Shidle Lodge No. 601</title>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Raleway', sans-serif;
-      background-color: #e7dfd5;
-      color: #3e2723;
-      margin: 0;
-      padding: 0;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-    nav {
-      background-color: #00457c;
-      padding: 10px 0;
-      text-align: center;
-    }
-    nav a {
       color: white;
-      margin: 0 15px;
       text-decoration: none;
       font-weight: 600;
       font-size: 16px;
     }
-    h1 {
-      font-size: 40px;
-      color: #00457c;
-      text-align: center;
-      margin: 20px 0;
-      text-transform: uppercase;
-    }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    .section {
-      margin-bottom: 40px;
-    }
-    .section h2 {
-      font-size: 22px;
-      color: #00457c;
-      border-left: 4px solid #00457c;
-      padding-left: 10px;
-      margin-bottom: 10px;
-    }
-    .notices-list {
-      list-style-type: none;
-      padding: 0;
-    }
-    .notices-list li {
-      margin-bottom: 10px;
-    }
-    .notices-list a {
-      color: #00457c;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .notices-list a:hover {
+
+    .nav-links a:hover,
+    .nav-links a.current {
       text-decoration: underline;
     }
-    p {
-      font-size: 16px;
-      margin-bottom: 16px;
-    }
-    iframe {
-      width: 100%;
+
+    .hamburger {
+      display: none;
+      font-size: 28px;
+      color: white;
+      background: none;
       border: none;
-      border-radius: 4px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      position: absolute;
+      left: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .hamburger {
+        display: block;
+      }
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: #00457c;
+        padding: 1rem 0;
+      }
+      .nav-links.show {
+        display: flex;
+      }
+      .nav-links a {
+        padding: 0.75rem;
+        text-align: center;
+        display: block;
+      }
+      .nav-container {
+        justify-content: flex-start;
+      }
+    }
+
+    /* Content container */
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #00457c;
+      text-align: center;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    p {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    p a {
+      color: #00457c;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    p a:hover {
+      text-decoration: underline;
+    }
+
+    /* Calendar iframe */
+    .calendar-frame {
+      width: 100%;
+      min-height: 700px;
+      height: 90vh;
+      border: none;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      display: block;
+    }
+
+    footer {
+      background-color: #222;
+      color: #ccc;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+      font-size: 0.9rem;
     }
   </style>
 </head>
-  <h1>Members Lodge Calendar</h1>
-  <p style="text-align:center;">
-    <a href="https://calendar.google.com/calendar/render?cid=796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com" target="_blank">
-      <img src="https://www.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_16_2x.png" alt="Google Calendar" style="height:20px;vertical-align:middle;"> Add to Google Calendar
-    </a>
-    &nbsp;|&nbsp;
-    <a href="https://calendar.google.com/calendar/ical/796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com/public/basic.ics" target="_blank">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Calendar" style="height:20px;vertical-align:middle;"> Add to Apple Calendar
-    </a>
-  </p>
 
-  <iframe>
-  class="calendar-frame"
-  src="https://calendar.google.com/calendar/embed?src=796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com&ctz=America%2FNew_York"
-  style="width:100%; height:90vh; border:none; border-radius:4px; box-shadow:0 0 5px rgba(0,0,0,0.1);"
-  allowfullscreen
-</iframe>
+<body>
+  <!-- Header -->
+  <header>
+    <img src="https://img1.wsimg.com/isteam/ip/1360334b-7327-47c2-8ca9-9c3529c88239/Shidle%20Masons_Logo_no%20background.png/:/rs=w:260,h:107,cg:true,m/cr=w:260,h:107/qt=q:95"
+      alt="Shidle Lodge Logo">
+  </header>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <button class="hamburger" id="hamburger">&#9776;</button>
+      <div class="nav-links" id="nav-links">
+        <a href="/home">Members Home</a>
+        <a href="/dues">Dues</a>
+        <a href="/calendar" class="current">Calendar</a>
+        <a href="/monthly-notices">Notices</a>
+        <a href="/contact">Contact Us</a>
+        <a href="/account">Account</a>
+        <a href="#" onclick="doLogout()">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <div class="container">
+    <h1>Members Lodge Calendar</h1>
+    <p>
+      <a href="https://calendar.google.com/calendar/render?cid=796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com"
+        target="_blank">
+        <img src="https://www.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_16_2x.png"
+          alt="Google Calendar" style="height:20px;vertical-align:middle;"> Add to Google Calendar
+      </a>
+      &nbsp;|&nbsp;
+      <a href="https://calendar.google.com/calendar/ical/796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com/public/basic.ics"
+        target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
+          alt="Apple Calendar" style="height:20px;vertical-align:middle;"> Add to Apple Calendar
+      </a>
+    </p>
+
+    <iframe class="calendar-frame"
+      src="https://calendar.google.com/calendar/embed?src=796a34600abecc5aa9663ff7f474a6d2524742ce7b1c99785e911de85a1c86ee%40group.calendar.google.com&ctz=America%2FNew_York"
+      allowfullscreen>
+    </iframe>
+  </div>
 
   <footer>
     &copy; 2025 Shidle Lodge No. 601. All rights reserved.
@@ -287,6 +211,7 @@
       document.getElementById("nav-links").classList.toggle("show");
     });
 
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyDq5qdmtcbKiDC-US3_KZNTNK7abOuqLCs",
       authDomain: "shidle-lodge-members.firebaseapp.com",
@@ -295,6 +220,7 @@
       messagingSenderId: "293450171850",
       appId: "1:293450171850:web:c0ff81fe794f8eaf137b33"
     };
+
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
@@ -304,6 +230,7 @@
       });
     }
 
+    // Require login before showing content
     auth.onAuthStateChanged((user) => {
       if (!user) {
         window.location.href = "https://members.shidlelodge601.org/";
@@ -312,6 +239,7 @@
       }
     });
 
+    // Auto-logout after 30 minutes
     setTimeout(() => { doLogout(); }, 30 * 60 * 1000);
   </script>
 </body>
