@@ -355,6 +355,30 @@
     });
   }
 </script>
+<!-- ✅ Fix Navbar Toggle + Alignment -->
+<script>
+  // Wait until DOM is ready so hamburger always binds
+  document.addEventListener("DOMContentLoaded", () => {
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("nav-links");
+    const navContainer = document.querySelector(".nav-container");
+
+    // 🔹 Match alignment from Calendar/Home
+    if (navContainer) {
+      navContainer.style.justifyContent = "center";
+      navContainer.style.position = "relative";
+    }
+
+    // 🔹 Ensure hamburger works consistently
+    if (hamburger && navLinks) {
+      hamburger.style.position = "absolute";
+      hamburger.style.left = "1rem";
+      hamburger.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+      });
+    }
+  });
+</script>
 
 </body>
 </html>
